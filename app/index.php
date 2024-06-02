@@ -29,6 +29,14 @@ $app->group('/usuarios',function(RouteCollectorProxy $group)
     $group->delete('/{id}', \UsuarioManejador::class . ':Baja');
 });
 
+$app->group('/prodcuctos',function(RouteCollectorProxy $group)
+{
+    $group->post('[/]', \UsuarioManejador::class . ':Alta');
+    $group->get('/{id}', \UsuarioManejador::class . ':ObtenerUno');
+    $group->get('[/]', \UsuarioManejador::class . ':ObtenerTodos');
+    $group->put('/{id}', \UsuarioManejador::class . ':Modificar');
+    $group->delete('/{id}', \UsuarioManejador::class . ':Baja');
+});
 
 
 $app->run();

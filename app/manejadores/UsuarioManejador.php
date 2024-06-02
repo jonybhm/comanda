@@ -12,6 +12,7 @@ class UsuarioManejador implements IManejadores
         var_dump($parametros);
         $usuario = $parametros['usuario'];
         $contrasena = $parametros['contrasena'];
+        $tipo = $parametros['tipo_empleado'];
     
         if(empty($usuario) || empty($contrasena))
         {
@@ -19,7 +20,7 @@ class UsuarioManejador implements IManejadores
         }
         else
         {
-            Usuario::AltaUsuario($usuario,$contrasena);
+            Usuario::AltaUsuario($usuario,$contrasena,$tipo);
             $payload = json_encode(array("mensaje" => "Usuario creado con exito"));
         }
 
@@ -83,7 +84,7 @@ class UsuarioManejador implements IManejadores
     {
         $id = (int)$args['id'];
         
-        $parametros = $request->getParsedBody();
+        $parametros = $request->getParsedBody();    
         var_dump($parametros);
 
         if (!$parametros) 
@@ -95,6 +96,7 @@ class UsuarioManejador implements IManejadores
 
         $usuario = $parametros['usuario'];
         $contrasena = $parametros['contrasena'];
+        $tipo = $parametros['tipo_empleado'];
         
         if(empty($id))
         {
@@ -102,13 +104,13 @@ class UsuarioManejador implements IManejadores
         }
         else
         {
-            if(empty($usuario) || empty($contrasena))
+            if(empty($usuario) || empty($contrasena) || empty($tipo))
             {
                 $payload = json_encode(array("mensaje" => "Error al modificar usuario, uno o mas campos vacios."));
             }
             else
             {
-                Usuario::ModificarUsuario($usuario,$contrasena,$id);
+                Usuario::ModificarUsuario($usuario,$contrasena,$tipo,$id);
                 $payload = json_encode(array("mensaje" => "Usuario modificado con exito"));
             }
         }
