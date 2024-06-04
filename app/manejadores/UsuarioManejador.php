@@ -9,10 +9,16 @@ class UsuarioManejador implements IManejadores
     public function Alta($request,$response, $args)
     {
         $parametros = $request->getParsedBody();
-        var_dump($parametros);
-        $usuario = $parametros['usuario'];
-        $contrasena = $parametros['contrasena'];
-        $tipo = $parametros['tipo_empleado'];
+
+        if (!$parametros) 
+        {
+            $payload = json_encode(array("mensaje" => "No se recibieron los datos correctamente."));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+        $usuario = $parametros['usuarioEmpleado'];
+        $contrasena = $parametros['contrasenaEmpleado'];
+        $tipo = $parametros['tipoEmpleado'];
     
         if(empty($usuario) || empty($contrasena))
         {
@@ -94,9 +100,9 @@ class UsuarioManejador implements IManejadores
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $usuario = $parametros['usuario'];
-        $contrasena = $parametros['contrasena'];
-        $tipo = $parametros['tipo_empleado'];
+        $usuario = $parametros['usuarioEmpleado'];
+        $contrasena = $parametros['contrasenaEmpleado'];
+        $tipo = $parametros['tipoEmpleado'];
         
         if(empty($id))
         {

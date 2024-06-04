@@ -2,6 +2,7 @@
 
 include_once "./auxiliar/Auxiliar.php";
 include_once "./base_de_datos/BaseDeDatos.php";
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 
 class Usuario
 {
@@ -25,35 +26,85 @@ class Usuario
     {
         $pdo = AccederABaseDeDatos('comanda');
         $query = "INSERT INTO usuarios (nombre_usuario, contraseña, tipo_empleado, fecha_ingreso) VALUES (?,?,?,?)";
-        CrearElemento($pdo,$query,$nombreUsuario,$password,$tipo);
+
+        $fecha = new DateTime(date("d-m-Y"));
+
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_STR);
+            $consulta -> bindValue(2, password_hash($password,PASSWORD_DEFAULT));
+            $consulta -> bindValue(3, $tipo, PDO::PARAM_STR);
+            $consulta -> bindValue(4, date_format($fecha, 'Y-m-d H:i:s'), PDO::PARAM_STR);
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al crear elemento: ".$e->getMessage();
+        }
+
     }
     
     static public function ConsultarUsuario($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
         $query = "SELECT * FROM usuarios WHERE id = ?";
-        return ObtenerElemento($pdo,$id,'Usuario',$query);
+        
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $id, PDO::PARAM_INT);
+        $consulta -> execute();
+
+        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Usuario');
+        $elemento = $consulta -> fetch();
+        return $elemento;
     }
     
     static public function ConsultarTodosLosUsuarios()
     {
         $pdo = AccederABaseDeDatos('comanda');
         $query = "SELECT * FROM usuarios";
-        return ObtenerTodosLosElementos($pdo,'usuarios','Usuario',$query);        
+        
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
     static public function ModificarUsuario($nombreUsuario,$password,$tipo,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
         $query = "UPDATE usuarios SET nombre_usuario = ?, contraseña = ?, tipo_empleado = ? WHERE id = ?";
-        ModificarElemento($pdo,$query,$nombreUsuario,$password,$tipo,$id);
+        
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_STR);
+            $consulta -> bindValue(2, password_hash($password,PASSWORD_DEFAULT));
+            $consulta -> bindValue(3, $tipo, PDO::PARAM_STR);
+            $consulta -> bindValue(4, $id, PDO::PARAM_INT);
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al modificar elemento: ".$e->getMessage();
+        }
+
     }
 
     static public function BorrarUsuario($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
         $query = "DELETE FROM usuarios WHERE id = ?";
-        BorrarElemento($pdo,$query,$id);
+        
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1, $id, PDO::PARAM_INT);
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al elimiar elemento: ".$e->getMessage();
+        }
     }
 } 
 
