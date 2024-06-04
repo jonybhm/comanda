@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "6c53988f-b970-4a8e-b1ac-dd32929daf8c",
+		"name": "Comanda",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26312058"
+	},
+	"item": [
+		{
+			"name": "http://localhost:1001/usuarios/3",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "usuario",
+							"value": "lud",
+							"type": "text"
+						},
+						{
+							"key": "contrasena",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "tipoEmpleado",
+							"value": "bartender",
+							"type": "text"
+						},
+						{
+							"key": "estado",
+							"value": "abierta",
+							"type": "text"
+						},
+						{
+							"key": "estadoPedido",
+							"value": "en cocina",
+							"type": "text"
+						},
+						{
+							"key": "tiempoPreparacion",
+							"value": "10",
+							"type": "text"
+						},
+						{
+							"key": "precioTotal",
+							"value": "550",
+							"type": "text"
+						},
+						{
+							"key": "nombreProducto",
+							"value": "empanada",
+							"type": "text"
+						},
+						{
+							"key": "precioProducto",
+							"value": "550",
+							"type": "text"
+						},
+						{
+							"key": "tipoProducto",
+							"value": "comida",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:1001/pedidos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1001",
+					"path": [
+						"pedidos"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
