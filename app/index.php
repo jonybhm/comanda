@@ -4,17 +4,20 @@ include_once "./manejadores/UsuarioManejador.php";
 include_once "./manejadores/ProductoManejador.php";
 include_once "./manejadores/MesaManejador.php";
 include_once "./manejadores/PedidoManejador.php";
+require_once "'./middlewares/AuthMiddleware.php'";
+
 
 use FastRoute\RouteCollector;
 use Slim\Factory\AppFactory;
 use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as IRequest;
+use Psr\Http\Server\RequestHandlerInterface as IRequestHandler;
 
 
-use Psr\Http\Server\RequestHandlerInterface;
+use Slim\Handlers\Strategies\RequestHandler;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\Routing\RouteContext;
-
+use Slim\Psr7\Response as ResponseClass;
 
 
 
@@ -23,6 +26,34 @@ $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
 $app->addBodyParsingMiddleware();
 
+//middleware
+$usuarioMW = function(IRequest $request, IRequestHandler $requestHandler)
+{
+    $params = $request->getQueryParams();
+    
+    echo "Entro al middleware".PHP_EOL;
+
+    if(!empty($params))
+    {
+        $response = $requestHandler ->handle($request);
+        
+        echo "Salgo del verbo al middleware".PHP_EOL;
+        
+        return $response;
+    }
+    else
+    {
+
+        echo "NO Entro al verbo".PHP_EOL;
+        
+        $response = new ResponseClass();
+        $response->getBody()->write(json_encode(array("eeror"=>"Parametros incorrectos")));
+        return $response->withHeader('Content-Type','application/json');
+        
+    }
+};
+
+//rutas
 $app->group('/usuarios',function(RouteCollectorProxy $group)
 {
     $group->post('[/]', \UsuarioManejador::class . ':Alta');
@@ -30,7 +61,9 @@ $app->group('/usuarios',function(RouteCollectorProxy $group)
     $group->get('[/]', \UsuarioManejador::class . ':ObtenerTodos');
     $group->put('/{id}', \UsuarioManejador::class . ':Modificar');
     $group->delete('/{id}', \UsuarioManejador::class . ':Baja');
-});
+})
+->add($usuarioMW)
+->add(new AuthMiddleware("socio"));
 
 $app->group('/productos',function(RouteCollectorProxy $group)
 {
