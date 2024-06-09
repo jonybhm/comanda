@@ -6,7 +6,6 @@ include_once "./manejadores/MesaManejador.php";
 include_once "./manejadores/PedidoManejador.php";
 require_once "'./middlewares/AuthMiddleware.php'";
 
-
 use FastRoute\RouteCollector;
 use Slim\Factory\AppFactory;
 use Psr\Http\Message\ResponseInterface as Response;
