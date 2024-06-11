@@ -69,14 +69,15 @@ class Pedido
         return $elemento;
     }
 
-    static public function ConsultarPedidoPorEstado($estado)
+    static public function ConsultarPedidoPorEstado($estado,$tipo)
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT * FROM servicio WHERE estado_producto = ?";
+        $query = "SELECT * FROM servicio WHERE estado_producto = ? AND tipo_producto = ?";
 
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $estado, PDO::PARAM_STR);
+        $consulta -> bindValue(2, $tipo, PDO::PARAM_STR);
         $consulta -> execute();
 
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');

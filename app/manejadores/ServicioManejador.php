@@ -84,6 +84,25 @@ class ServicioManejador
 
     public function RecibirPedidosPendientes($request,$response, $args)
     {
+
+        $params = $request->getQueryParams();
+
+        if(isset($params["credenciales"]))
+        {
+            $tipoPedido = "";
+            $credenciales = $params ["credenciales"];
+            
+            switch($credenciales)
+            {
+                case "cocinero":
+                    $tipoPedido = "comida";
+                    break;
+                case "bartender":
+                    $tipoPedido = "bebida";
+                    break;                                        
+            }
+        }
+
         $estadoPedido = "pendiente";
 
                
@@ -93,7 +112,7 @@ class ServicioManejador
         }
         else
         {
-            $pedido = Pedido::ConsultarPedidoPorEstado($estadoPedido);
+            $pedido = Pedido::ConsultarPedidoPorEstado($estadoPedido,$tipoPedido);
             
             if($pedido)
             {
@@ -157,8 +176,16 @@ class ServicioManejador
     
     }
 
+    #---------------------------PEDIDOS LISTOS PARA ENTREGAR---------------------------
+
     public function RecibirPedidosListosParaEntregar($request,$response, $args)
     {
+        $params = $request->getQueryParams();
+
+        if(isset($params["tipoPedido"]))
+        {
+            $tipoPedido = $params["tipoPedido"];
+        }
         $estadoPedido = "listo para entregar";
 
                
@@ -168,7 +195,7 @@ class ServicioManejador
         }
         else
         {
-            $pedido = Pedido::ConsultarPedidoPorEstado($estadoPedido);
+            $pedido = Pedido::ConsultarPedidoPorEstado($estadoPedido,$tipoPedido);
             
             if($pedido)
             {
@@ -185,6 +212,8 @@ class ServicioManejador
         
         return $response->withHeader('Content-Type', 'application/json');    
     }
+
+    #---------------------------LLEVAR PEDIDOS A MESAS---------------------------
 
     public function ServirPedido($request,$response, $args)
     {
@@ -210,6 +239,8 @@ class ServicioManejador
         else
         {
         
+            Mesa::ModificarMesa("con cliente comiendo",$idMesa);
+
             Servicio::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idMesa,$nombreProducto);
             $payload = json_encode(array("mensaje" => "pedido de mesa ".$idMesa." entregado con exito"));
             
@@ -220,6 +251,9 @@ class ServicioManejador
         return $response->withHeader('Content-Type', 'application/json');    
     
     }
+
+    #---------------------------COBRAR CLIENTES---------------------------
+
 
     public function CobrarPedido($request,$response, $args)
     {
@@ -251,6 +285,7 @@ class ServicioManejador
 
     }
 
+    #---------------------------CERRAR MESASs---------------------------
 
     public function CerrarMesa($request,$response, $args)
     {
