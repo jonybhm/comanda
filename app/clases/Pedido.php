@@ -24,26 +24,33 @@ class Pedido
         $this->_foto = $foto;        
     }
     
-    static public function AltaPedido($idMesa,$nombreCliente,$estadoPedido,$precioTotal)
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    static public function AltaPedido($idMesa,$nombreCliente)
     {
         $claveAlfaNumerica = GenerarClaveAlfaNumerica();
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "INSERT INTO pedidos (id, id_mesa, nombre_cliente, estado, precio_total) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO pedidos (id, id_mesa, nombre_cliente,estado) VALUES (?, ?, ?, 'pendiente')";
         try
         {
             $consulta = $pdo->prepare($query);
             $consulta -> bindValue(1,$claveAlfaNumerica , PDO::PARAM_STR);
             $consulta -> bindValue(2,$idMesa , PDO::PARAM_STR);
             $consulta -> bindValue(3,$nombreCliente , PDO::PARAM_STR);
-            $consulta -> bindValue(4,$estadoPedido , PDO::PARAM_STR);
-            $consulta -> bindValue(5,$precioTotal , PDO::PARAM_STR);
+            // $consulta -> bindValue(4,$estadoPedido , PDO::PARAM_STR);
+            // $consulta -> bindValue(5,$precioTotal , PDO::PARAM_STR);
             //$consulta -> bindValue(6,$tiempoPreparacion , PDO::PARAM_INT);
             //$consulta -> bindValue(7,$foto , PDO::PARAM_LOB);
             $consulta -> execute();
+            return $claveAlfaNumerica;
         }
         catch(PDOException $e)
         {
             echo "Error al crear elemento: ".$e->getMessage();
+            return NULL;
         }
     }
     
@@ -60,6 +67,19 @@ class Pedido
         $consulta -> setFetchMode(PDO::FETCH_CLASS,'Pedido');
         $elemento = $consulta -> fetch();
         return $elemento;
+    }
+
+    static public function ConsultarPedidoPorEstado($estado)
+    {
+
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT * FROM servicio WHERE estado_producto = ?";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $estado, PDO::PARAM_STR);
+        $consulta -> execute();
+
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
     
     static public function ConsultarTodosLosPedidos()
@@ -91,6 +111,23 @@ class Pedido
         }
     }
 
+    static public function ModificarPrecioPedido($precioTotal,$id)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "UPDATE pedidos SET precio_total = ? WHERE id_mesa = ?";
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1,$precioTotal , PDO::PARAM_STR);
+            $consulta -> bindValue(2, $id, PDO::PARAM_STR);
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al modificar elemento: ".$e->getMessage();
+        }
+    }
+
     static public function BorrarPedido($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -106,6 +143,8 @@ class Pedido
             echo "Error al elimiar elemento: ".$e->getMessage();
         }
     }
+
+    
 } 
 
 

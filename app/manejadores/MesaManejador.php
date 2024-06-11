@@ -121,5 +121,7 @@ class MesaManejador implements IManejadores
         
         return $response->withHeader('Content-Type', 'application/json');    
     }
+
+    
 }
 

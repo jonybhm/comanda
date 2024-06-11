@@ -1,4 +1,10 @@
 <?php
+
+use Psr\Http\Message\ServerRequestInterface as IRequest;
+use Psr\Http\Server\RequestHandlerInterface as IRequestHandler;
+use Slim\Psr7\Response as ResponseClass;
+
+
 function GenerarClaveAlfaNumerica()
 {
     //Armo un hash completo
@@ -8,3 +14,4 @@ function GenerarClaveAlfaNumerica()
     //Reduzo a 5 caracteres
     return $clave = substr($claveAlfaNumerica,-5);
 }
+

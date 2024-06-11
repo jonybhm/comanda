@@ -19,12 +19,12 @@ class PedidoManejador implements IManejadores
         
         $idMesa = $parametros['idMesa'];
         $nombreCliente = $parametros['nombreCliente'];
-        $estadoPedido = $parametros['estadoPedido'];
-        $precioTotal = $parametros['precioTotal'];
+        // $estadoPedido = $parametros['estadoPedido'];
+        // $precioTotal = $parametros['precioTotal'];
         // $tiempoPreparacion = $parametros['tiempoPreparacion'];
         // $foto = $parametros['foto'];
 
-        Pedido::AltaPedido($idMesa,$nombreCliente,$estadoPedido,$precioTotal);
+        Pedido::AltaPedido($idMesa,$nombreCliente);
         $payload = json_encode(array("mensaje" => "Pedido creada con exito"));
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');    
@@ -140,5 +140,7 @@ class PedidoManejador implements IManejadores
         
         return $response->withHeader('Content-Type', 'application/json');    
     }
+
+    
 }
 

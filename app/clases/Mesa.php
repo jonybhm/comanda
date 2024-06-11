@@ -18,7 +18,7 @@ class Mesa
     {
         $claveAlfaNumerica = GenerarClaveAlfaNumerica();
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "INSERT INTO mesas (id, estado) VALUES (?, 'cerrada')";
+        $query = "INSERT INTO mesas (id, estado_mesa) VALUES (?, 'cerrada')";
         try
         {
             $consulta = $pdo->prepare($query);
@@ -61,7 +61,7 @@ class Mesa
     static public function ModificarMesa($estado,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "UPDATE mesas SET estado = ? WHERE id = ?";
+        $query = "UPDATE mesas SET estado_mesa = ? WHERE id = ?";
         try
         {
             $consulta = $pdo->prepare($query);
