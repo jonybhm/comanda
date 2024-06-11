@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "6c53988f-b970-4a8e-b1ac-dd32929daf8c",
+		"_postman_id": "efd19d94-2322-4573-b0bc-94e532325b32",
 		"name": "Comanda",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26312058"
+		"_exporter_id": "36201695"
 	},
 	"item": [
 		{
@@ -18,66 +18,77 @@
 					"mode": "urlencoded",
 					"urlencoded": [
 						{
-							"key": "usuario",
-							"value": "lud",
+							"key": "usuarioEmpleado",
+							"value": "roberto",
 							"type": "text"
 						},
 						{
-							"key": "contrasena",
-							"value": "123456",
+							"key": "contrasenaEmpleado",
+							"value": "holala",
 							"type": "text"
 						},
 						{
 							"key": "tipoEmpleado",
-							"value": "bartender",
-							"type": "text"
-						},
-						{
-							"key": "estado",
-							"value": "abierta",
-							"type": "text"
-						},
-						{
-							"key": "estadoPedido",
-							"value": "en cocina",
-							"type": "text"
-						},
-						{
-							"key": "tiempoPreparacion",
-							"value": "10",
-							"type": "text"
-						},
-						{
-							"key": "precioTotal",
-							"value": "550",
+							"value": "mozo",
 							"type": "text"
 						},
 						{
 							"key": "nombreProducto",
-							"value": "empanada",
+							"value": "cerveza",
 							"type": "text"
 						},
 						{
 							"key": "precioProducto",
-							"value": "550",
+							"value": "450.97",
 							"type": "text"
 						},
 						{
 							"key": "tipoProducto",
-							"value": "comida",
+							"value": "bebida",
+							"type": "text"
+						},
+						{
+							"key": "estadoMesa",
+							"value": "abierta",
+							"type": "text"
+						},
+						{
+							"key": "estadoProductoPedido",
+							"value": "listo para entregar",
+							"type": "text"
+						},
+						{
+							"key": "tiempoEstimado",
+							"value": "5",
+							"type": "text"
+						},
+						{
+							"key": "nombreProducto",
+							"value": "pizza",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:1001/pedidos",
+					"raw": "http://localhost:1001/servicio/?credenciales=socio&tipoPedido=comida",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "1001",
 					"path": [
-						"pedidos"
+						"servicio",
+						""
+					],
+					"query": [
+						{
+							"key": "credenciales",
+							"value": "socio"
+						},
+						{
+							"key": "tipoPedido",
+							"value": "comida"
+						}
 					]
 				}
 			},
