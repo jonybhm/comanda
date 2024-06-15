@@ -18,7 +18,6 @@ class AuthMiddleware
     public function __invoke(IRequest $request, IRequestHandler $requestHandler)
     {
         $response = new ResponseClass();
-        echo "entro al authMW".PHP_EOL;
 
         $params = $request->getQueryParams();
 
@@ -42,7 +41,6 @@ class AuthMiddleware
             $response->getBody()->write(json_encode(array("error"=>"No hay credenciales")));
 
         }
-        echo "salgo del authMW".PHP_EOL;
         return $response->withHeader('Content-Type','application/json');    
     }
     

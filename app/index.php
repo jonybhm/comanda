@@ -1,12 +1,14 @@
 <?php
 require_once '../vendor/autoload.php';
-include_once "./manejadores/ServicioManejador.php";
+include_once "./manejadores/PedidoProductoManejador.php";
 include_once "./manejadores/UsuarioManejador.php";
 include_once "./manejadores/ProductoManejador.php";
 include_once "./manejadores/MesaManejador.php";
 include_once "./manejadores/PedidoManejador.php";
 require_once "./middlewares/AuthMiddleware.php";
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
 
 use FastRoute\RouteCollector;
 use Slim\Factory\AppFactory;
@@ -82,7 +84,7 @@ $app->group('/pedidos',function(RouteCollectorProxy $group)
 
 $app->group('/tomaPedidos',function(RouteCollectorProxy $group)
 {
-    $group->post('[/]', \ServicioManejador::class . ':TomarPedido');
+    $group->post('[/]', \PedidoProductoManejador::class . ':TomarPedido');
 })->add(new AuthMiddleware(["mozo"]));
 
 
@@ -90,17 +92,17 @@ $app->group('/tomaPedidos',function(RouteCollectorProxy $group)
 
 $app->group('/reciboPedidos',function(RouteCollectorProxy $group)
 {
-    $group->get('[/]', \ServicioManejador::class . ':RecibirPedidosPendientes');
-    $group->put('/{idMesa}', \ServicioManejador::class . ':ModificarPedidosPendientes');    
-})->add(new AuthMiddleware(["cocinero","bartender"]));
+    $group->get('[/]', \PedidoProductoManejador::class . ':RecibirPedidosPendientes');
+    $group->put('/{idPedidoProducto}', \PedidoProductoManejador::class . ':ModificarPedidosPendientes');    
+})->add(new AuthMiddleware(["cocinero","bartender","cervecero"]));
 
 
 #---------------------------ENTREGA PEDIDO EN MESA---------------------------
 
 $app->group('/entregaPedidos',function(RouteCollectorProxy $group)
 {
-    $group->get('[/]', \ServicioManejador::class . ':RecibirPedidosListosParaEntregar');
-    $group->put('/{idMesa}', \ServicioManejador::class . ':ServirPedido');
+    $group->get('[/]', \PedidoProductoManejador::class . ':RecibirPedidosListosParaEntregar');
+    $group->put('/{idPedidoProducto}', \PedidoProductoManejador::class . ':ServirPedido');
 })->add(new AuthMiddleware(["mozo"]));
 
 
@@ -108,7 +110,7 @@ $app->group('/entregaPedidos',function(RouteCollectorProxy $group)
 
 $app->group('/cobroPedidos',function(RouteCollectorProxy $group)
 {
-    $group->put('/{idMesa}', \ServicioManejador::class . ':CobrarPedido');
+    $group->put('/{idPedido}', \PedidoProductoManejador::class . ':CobrarPedido');
 })->add(new AuthMiddleware(["mozo"]));
 
 
@@ -116,7 +118,7 @@ $app->group('/cobroPedidos',function(RouteCollectorProxy $group)
 
 $app->group('/cierrePedidos',function(RouteCollectorProxy $group)
 {
-    $group->put('/{id}', \ServicioManejador::class . ':CerrarMesa');
+    $group->put('/{id}', \PedidoProductoManejador::class . ':CerrarMesa');
 })->add(new AuthMiddleware(["socio"]));
 
 $app->run();

@@ -73,7 +73,7 @@ class Pedido
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT * FROM servicio WHERE estado_producto = ? AND tipo_producto = ?";
+        $query = "SELECT productos_pedidos.id, productos.nombre_producto, productos_pedidos.id_pedido, productos_pedidos.nombre_cliente FROM productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto = productos.id WHERE productos_pedidos.estado_producto = ? AND productos.tipo_producto = ?";
 
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $estado, PDO::PARAM_STR);

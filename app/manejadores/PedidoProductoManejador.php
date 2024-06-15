@@ -2,10 +2,10 @@
 include_once "./clases/Pedido.php";
 include_once "./clases/Mesa.php";
 
-include_once "./clases/Servicio.php";
+include_once "./clases/PedidoProducto.php";
 include_once "./auxiliar/auxiliar.php";
 
-class ServicioManejador
+class PedidoProductoManejador
 {
     #---------------------------TOMA DE PEDIDOS---------------------------
 
@@ -54,15 +54,18 @@ class ServicioManejador
                           
             foreach($productosDelPedido as $producto)
             {
-                if(empty($producto["nombre"]) || empty($producto["cantidad"]))
+                if(empty($producto["idProducto"]) || empty($producto["cantidad"]))
                 {
                     $payload = json_encode(array("mensaje" => "Error al crear producto, uno o mas campos vacios."));
                 }
                 else
                 {
-    
-                    $precioParcial = Servicio::AltaProductosPedido($idPedido,$idMesa,$nombreCliente,$producto["nombre"], $producto["cantidad"]);
-                    $contenidoMensaje = $contenidoMensaje.PHP_EOL.$producto["nombre"]." agregado al pedido X ".$producto["cantidad"]." por un precio $".$precioParcial; 
+                    for($i=0;$i<$producto["cantidad"];$i++)
+                    {
+                        $precioParcial = PedidoProducto::AltaProductosPedido($idPedido,$nombreCliente,$producto["idProducto"],$producto["cantidad"]);                    
+                    }
+                                        
+                    $contenidoMensaje = $contenidoMensaje.PHP_EOL.$producto["idProducto"]." agregado al pedido X ".$producto["cantidad"]." por un precio $".$precioParcial; 
                 }
                     
                 $precioTotal = $precioTotal + $precioParcial;
@@ -99,6 +102,9 @@ class ServicioManejador
                     break;
                 case "bartender":
                     $tipoPedido = "bebida";
+                    break; 
+                case "cervecero":
+                    $tipoPedido = "cerveza";
                     break;                                        
             }
         }
@@ -120,15 +126,13 @@ class ServicioManejador
             }
             else
             {
-                $payload = json_encode(array("mensaje" => "Pedido no encontrado."));
+                $payload = json_encode(array("mensaje" => "Sin pedidos."));
             }
         }
-
 
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json');    
-    
     }
 
     
@@ -138,7 +142,28 @@ class ServicioManejador
 
     public function ModificarPedidosPendientes($request,$response, $args)
     {
-        $idMesa = $args['idMesa'];
+        $params = $request->getQueryParams();
+
+        if(isset($params["credenciales"]))
+        {
+            $tipoProducto = "";
+            $credenciales = $params ["credenciales"];
+            
+            switch($credenciales)
+            {
+                case "cocinero":
+                    $tipoProducto = "comida";
+                    break;
+                case "bartender":
+                    $tipoProducto = "bebida";
+                    break; 
+                case "cervecero":
+                    $tipoProducto = "cerveza";
+                    break;                                        
+            }
+        }
+
+        $idPedidoProducto = $args['idPedidoProducto'];
         
         $parametros = $request->getParsedBody();    
 
@@ -149,11 +174,11 @@ class ServicioManejador
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $estadoPedidoProducto = $parametros['estadoProductoPedido'];
+        $estadoPedidoProducto = $parametros['estadoPedidoProducto'];
         $tiempoEstimado = $parametros['tiempoEstimado'];
-        $nombreProducto = $parametros['nombreProducto'];
         
-        if(empty($idMesa))
+        
+        if(empty($idPedidoProducto))
         {
             $payload = json_encode(array("mensaje" => "Error al buscar la mesa del pedido, campo id vacio."));
         }
@@ -161,12 +186,12 @@ class ServicioManejador
         {
             if(empty($estadoPedidoProducto) || empty($tiempoEstimado))
             {
-                $payload = json_encode(array("mensaje" => "Error al modificar pedido de mesa ".$idMesa.", uno o mas campos vacios."));
+                $payload = json_encode(array("mensaje" => "Error al modificar pedido ".$idPedidoProducto.", uno o mas campos vacios."));
             }
             else
             {
-                Servicio::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idMesa,$nombreProducto);
-                $payload = json_encode(array("mensaje" => "pedido de mesa ".$idMesa." modificado con exito"));
+                PedidoProducto::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idPedidoProducto,$tipoProducto);
+                $payload = json_encode(array("mensaje" => "Estado del pedido ".$idPedidoProducto." modificado con exito a: '".$estadoPedidoProducto."'"));
             }
         }
 
@@ -180,33 +205,27 @@ class ServicioManejador
 
     public function RecibirPedidosListosParaEntregar($request,$response, $args)
     {
-        $params = $request->getQueryParams();
 
-        if(isset($params["tipoPedido"]))
-        {
-            $tipoPedido = $params["tipoPedido"];
-        }
-        $estadoPedido = "listo para entregar";
+        $arrayTipoPedidos = ["comida","bebida","cerveza"];
+        $arrayMensaje = array();
 
-               
-        if(empty($estadoPedido))
+        foreach($arrayTipoPedidos as $tipo)
         {
-            $payload = json_encode(array("mensaje" => "Error al buscar pedido, no hay pendientes"));
-        }
-        else
-        {
-            $pedido = Pedido::ConsultarPedidoPorEstado($estadoPedido,$tipoPedido);
+            
+            $pedido = Pedido::ConsultarPedidoPorEstado("listo para entregar",$tipo);
             
             if($pedido)
-            {
-                $payload = json_encode($pedido);
-            }
+            {            
+                array_push($arrayMensaje,$pedido);
+            }  
             else
             {
-                $payload = json_encode(array("mensaje" => "Pedido no encontrado."));
+                array_push($arrayMensaje, "No hay pedidos del tipo ".$tipo." que estén listos para entregar");
             }
         }
-
+        
+        $payload = json_encode($arrayMensaje);
+        
 
         $response->getBody()->write($payload);
         
@@ -217,7 +236,7 @@ class ServicioManejador
 
     public function ServirPedido($request,$response, $args)
     {
-        $idMesa = $args['idMesa'];
+        $idPedidoProducto = $args['idPedidoProducto'];
         
         $parametros = $request->getParsedBody();    
 
@@ -228,21 +247,19 @@ class ServicioManejador
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $estadoPedidoProducto = "entregado";
-        $tiempoEstimado = 0;
-        $nombreProducto = $parametros['nombreProducto'];
+        $tipoProducto = $parametros['tipoProducto'];
         
-        if(empty($idMesa))
+        if(empty($idPedidoProducto))
         {
-            $payload = json_encode(array("mensaje" => "Error al buscar la mesa del pedido, campo id vacio."));
+            $payload = json_encode(array("mensaje" => "Error al buscar el pedido, campo id vacio."));
         }
         else
         {
         
-            Mesa::ModificarMesa("con cliente comiendo",$idMesa);
+            Mesa::ModificarMesa("con cliente comiendo",$idPedidoProducto);
 
-            Servicio::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idMesa,$nombreProducto);
-            $payload = json_encode(array("mensaje" => "pedido de mesa ".$idMesa." entregado con exito"));
+            PedidoProducto::ModificarProductoPedido("entregado",0,$idPedidoProducto,$tipoProducto);
+            $payload = json_encode(array("mensaje" => "pedido ".$idPedidoProducto." entregado con exito"));
             
         }
 
@@ -277,7 +294,7 @@ class ServicioManejador
         if($pagoExitoso)
         {
             echo PHP_EOL."pago exitoso";
-            Servicio::EliminarPedidoLuegoDeCobrar($idMesa);
+            PedidoProducto::EliminarPedidoLuegoDeCobrar($idMesa);
         }
         $response->getBody()->write($payload);
         
