@@ -3,6 +3,8 @@
 include_once "./clases/usuario.php";
 include_once "./auxiliar/auxiliar.php";
 include_once "./interfaces/IManejadores.php";
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+
 
 class UsuarioManejador implements IManejadores
 {
@@ -147,5 +149,70 @@ class UsuarioManejador implements IManejadores
     return $response->withHeader('Content-Type', 'application/json');    
     
     }
+
+    public static function Importar($request, $response, $args)
+    {
+        $archivo = $_FILES['archivo']['tmp_name'];
+        if($archivo)
+        {
+            $archivo = file($archivo, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $titulosColumnas = true;
+            foreach ($archivo as $linea) 
+            {
+                if(!$titulosColumnas)
+                {
+                    $columnas = explode(',', $linea);
+                    $usuarioNombre = $columnas[1];
+                    $usuarioPassword = $columnas[2];
+                    $usuarioTipo = $columnas[3];
+                    $usuarioIngreso = $columnas[4];
+                    
+                    Usuario::AltaUsuario($usuarioNombre,$usuarioPassword,$usuarioTipo);
+                }
+                $titulosColumnas = false;
+            }
+            $payload = json_encode(array("mensaje" => "Se importaron los usuarios"));
+            $response->getBody()->write($payload);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "Error: No se importaron los usuarios"));
+            $response->getBody()->write($payload);
+        }
+        return $response->withHeader('Content-Type', 'application/json');
+    }
+
+    public static function Exportar($request, $response, $args)
+    {
+        $fecha = new DateTime(date("d-m-Y"));
+        $pathFile = "./archivos";
+        $nombreArchivo = 'ListaUsuarios.csv';
+        if(!is_dir($pathFile))
+        {
+            if(!mkdir($pathFile, 0755, true)) 
+            {
+                die('Error al crear el directorio');
+            }
+        }
+        $rutaCompleta = $pathFile . '/' . $nombreArchivo."_".date_format($fecha, 'Y-m-d H:i:s');
+
+        $archivo = fopen($rutaCompleta, 'w');
+        fputcsv($archivo, ['id', 'nombre_usuario', 'contraseña', 'tipo_empleado', 'fecha_ingreso']);
+
+        $usuarios = Usuario::ConsultarTodosLosUsuarios();
+
+        foreach ($usuarios as $usuario) 
+        {
+            fputcsv($archivo, (array)$usuario);
+        }
+
+        fclose($archivo);
+        
+        $payload = json_encode(array("mensaje"=> "se exporoto el listado de Usuarios"));
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+
+    }
+
 }
 

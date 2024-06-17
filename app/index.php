@@ -128,7 +128,6 @@ $app->group('/cierrePedidos',function(RouteCollectorProxy $group)
 })->add(new AuthMiddleware(["socio"]));
 
 
-
 #---------------------------TOKENS---------------------------
 
 
@@ -139,6 +138,16 @@ $app->group('/login',function(RouteCollectorProxy $group)
 
 $app->run();
 
+#---------------------------ARCHIVOS---------------------------
+
+
+$app->group('/archivos',function(RouteCollectorProxy $group)
+{
+    $group->post('/importar', \UsuarioManejador::class . ':Importar');
+    $group->get('/exportar', \UsuarioManejador::class . ':Exportar');
+});
+
+$app->run();
 
 /*
 token socio ejemplo:
