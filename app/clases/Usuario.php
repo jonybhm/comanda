@@ -106,6 +106,53 @@ class Usuario
             echo "Error al elimiar elemento: ".$e->getMessage();
         }
     }
+
+    static public function VerificarUsuarioYContraseña($nombreUsuario,$password)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
+        try
+        {   
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_INT);
+            $consulta -> execute();
+
+            $consulta -> setFetchMode(PDO::FETCH_CLASS,'Usuario');
+            $usuario = $consulta -> fetch();
+
+            //var_dump($usuario);
+
+            foreach($usuario as $key => $value)
+            {
+                switch($key)
+                {
+                    case "contraseña":
+                        $hash = $value;
+                        break;                                       
+                }
+            }   
+            
+            echo $password.PHP_EOL.$hash.PHP_EOL;
+
+            $contrasenaValida = password_verify($password,$hash);//SEGUIR ACA!!!
+            
+            var_dump($contrasenaValida);
+
+            if($usuario && $contrasenaValida)
+            {
+                return $usuario;
+            }
+            else
+            {
+                return NULL;
+            }
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al buscar usuario: ".$e->getMessage();
+        }
+    }
+    
 } 
 
 

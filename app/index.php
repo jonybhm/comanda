@@ -5,12 +5,18 @@ include_once "./manejadores/UsuarioManejador.php";
 include_once "./manejadores/ProductoManejador.php";
 include_once "./manejadores/MesaManejador.php";
 include_once "./manejadores/PedidoManejador.php";
+include_once "./manejadores/TokenManejador.php";
+
 require_once "./middlewares/AuthMiddleware.php";
+require_once "./token/JasonWebToken.php";
+
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
 use FastRoute\RouteCollector;
+//use GuzzleHttp\Psr7\Request;
+use Slim\Psr7\Request;
 use Slim\Factory\AppFactory;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as IRequest;
@@ -121,6 +127,27 @@ $app->group('/cierrePedidos',function(RouteCollectorProxy $group)
     $group->put('/{id}', \PedidoProductoManejador::class . ':CerrarMesa');
 })->add(new AuthMiddleware(["socio"]));
 
+
+
+#---------------------------TOKENS---------------------------
+
+
+$app->group('/login',function(RouteCollectorProxy $group)
+{
+    $group->post('[/]', \TokenManejador::class . ':IngresarYGenerarToken');
+});
+
 $app->run();
 
+
+/*
+token socio ejemplo:
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTg1OTI1OTIsImV4cCI6MTcxODY1MjU5MiwiYXVkIjoiOTNjMmMzZGYzODVkYWE5OGEwNDdkMDlmNTBiOGU1ZmEzOTk2ODg2MyIsImRhdGEiOnsidXN1YXJpbyI6InBydWViYSIsInBlcmZpbCI6InNvY2lvIn0sImFwcCI6IlRlc3QgSldUIn0.G6qB_TDLsP9KQJE7anyUIfV_BEFhIi8pwOwoD73Qik4
+
+token mozo ejemplo:
+
+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTg1OTI3NDEsImV4cCI6MTcxODY1Mjc0MSwiYXVkIjoiOTNjMmMzZGYzODVkYWE5OGEwNDdkMDlmNTBiOGU1ZmEzOTk2ODg2MyIsImRhdGEiOnsidXN1YXJpbyI6InBydWViYSIsInBlcmZpbCI6Im1vem8ifSwiYXBwIjoiVGVzdCBKV1QifQ.1v9-t1L9-sV9gXpAHw2-Kj5JYkXC55ysy2VdXSkOWp4
+*/
 ?>
+
