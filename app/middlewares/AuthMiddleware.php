@@ -21,10 +21,7 @@ class AuthMiddleware
 
     public function __invoke(IRequest $request, IRequestHandler $requestHandler)
     {
-        #BUSCAR COMO MANEJAR LA CLAVE SECRETA Y EL TIPO DE ENCRIPTACION
-        $claveSecreta = 'T3sT$JWT';
-        $tipoEncriptacion = ['HS256']; 
-        
+              
         $response = new ResponseClass();
 
         $params = $request->getQueryParams();
@@ -42,9 +39,9 @@ class AuthMiddleware
 
         try 
         {
-            VerificarToken($token,$claveSecreta,$tipoEncriptacion);
+            JasonWebToken::VerificarToken($token);
 
-            $data = ObtenerData($token,$claveSecreta,$tipoEncriptacion);
+            $data = JasonWebToken::ObtenerData($token);
             
             if(in_array($data->perfil,$this->_perfiles))
             {
@@ -61,7 +58,7 @@ class AuthMiddleware
         catch (Exception $e) 
         {
             $response = new Response();
-            $payload = json_encode(array('mensaje' => 'ERROR: Hubo un error con el TOKEN'));
+            $payload = json_encode(array('mensaje' => 'ERROR: Hubo un error con el TOKEN'.PHP_EOL.$e));
             $response->getBody()->write($payload);
         }
         return $response->withHeader('Content-Type', 'application/json');

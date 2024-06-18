@@ -10,21 +10,31 @@ class TokenManejador
     {
         $parametros = $request->getParsedBody();
 
-        $nombreUsuario = $parametros['usuario'];
-        $contraseña = $parametros['contraseña'];
-        //$credenciales = $parametros['credenciales'];
-
-        $claveSecreta = 'T3sT$JWT';
-        $tipoEncriptacion = ['HS256']; 
+        $nombreUsuario = $parametros['usuarioEmpleado'];
+        $contraseña = $parametros['contrasenaEmpleado'];
+       
 
         $usuario = Usuario::VerificarUsuarioYContraseña($nombreUsuario,$contraseña);
         
         if($usuario)
         {  
-            var_dump($usuario);
-            $datos = array('usuario' => $usuario["nombre"],'perfil' => $usuario["tipo_empleado"]);
+
+            $datos = array('usuario' => "",'perfil' => "");
+            
+            foreach($usuario as $key => $value)
+            {
+                switch($key)
+                {
+                    case "nombre_usuario":
+                        $datos['usuario'] = $value;
+                        break;   
+                    case "tipo_empleado":
+                        $datos['perfil'] = $value;
+                        break;                                       
+                }
+            }   
         
-            $token = CrearToken($datos,$claveSecreta,$tipoEncriptacion);
+            $token = JasonWebToken::CrearToken($datos);
             $payload = json_encode(array('jwt' => $token));
         } 
         else

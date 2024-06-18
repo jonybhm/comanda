@@ -186,31 +186,41 @@ class UsuarioManejador implements IManejadores
     {
         $fecha = new DateTime(date("d-m-Y"));
         $pathFile = "./archivos";
-        $nombreArchivo = 'ListaUsuarios.csv';
-        if(!is_dir($pathFile))
+
+        if (!is_dir($pathFile)) 
         {
-            if(!mkdir($pathFile, 0755, true)) 
-            {
-                die('Error al crear el directorio');
-            }
+            mkdir($pathFile, 0777, true);
         }
-        $rutaCompleta = $pathFile . '/' . $nombreArchivo."_".date_format($fecha, 'Y-m-d H:i:s');
+    
+        $rutaCompleta = $pathFile . "/ListaUsuarios_".date_format($fecha, 'Y-m-d_H-i-s').".csv";
 
         $archivo = fopen($rutaCompleta, 'w');
-        fputcsv($archivo, ['id', 'nombre_usuario', 'contraseña', 'tipo_empleado', 'fecha_ingreso']);
 
-        $usuarios = Usuario::ConsultarTodosLosUsuarios();
-
-        foreach ($usuarios as $usuario) 
+        if(!$archivo)
         {
-            fputcsv($archivo, (array)$usuario);
+            $payload = json_encode(array("mensaje"=> "error al abrir el archivo"));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
+        }
+        else
+        {
+            fputcsv($archivo, ['id', 'nombre_usuario', 'contraseña', 'tipo_empleado', 'fecha_ingreso']);
+    
+            $usuarios = Usuario::ConsultarTodosLosUsuarios();
+    
+            foreach ($usuarios as $usuario) 
+            {
+                fputcsv($archivo, array_slice((array)$usuario,5));
+            }
+
+            fclose($archivo);
+
+            $payload = json_encode(array("mensaje"=> "se exporoto el listado de Usuarios"));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json');
         }
 
-        fclose($archivo);
         
-        $payload = json_encode(array("mensaje"=> "se exporoto el listado de Usuarios"));
-        $response->getBody()->write($payload);
-        return $response->withHeader('Content-Type', 'application/json');
 
     }
 

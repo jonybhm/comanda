@@ -169,7 +169,6 @@ class Usuario
             $consulta -> setFetchMode(PDO::FETCH_CLASS,'Usuario');
             $usuario = $consulta -> fetch();
 
-            //var_dump($usuario);
 
             foreach($usuario as $key => $value)
             {
@@ -183,10 +182,8 @@ class Usuario
             
             echo $password.PHP_EOL.$hash.PHP_EOL;
 
-            //$contrasenaValida = password_verify($password,$hash);
-            $contrasenaValida = true;
-
-            //var_dump($contrasenaValida);
+            $contrasenaValida = password_verify($password,$hash);
+            
 
             if($usuario && $contrasenaValida)
             {
