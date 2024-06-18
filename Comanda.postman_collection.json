@@ -1,94 +1,115 @@
 {
 	"info": {
-		"_postman_id": "efd19d94-2322-4573-b0bc-94e532325b32",
+		"_postman_id": "40319d49-2218-4e3e-b3be-0bdaeda62220",
 		"name": "Comanda",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "36201695"
 	},
 	"item": [
 		{
-			"name": "http://localhost:1001/usuarios/3",
+			"name": "http://localhost:1001/usuarios/",
 			"protocolProfileBehavior": {
-				"disableBodyPruning": true
+				"disableBodyPruning": true,
+				"followOriginalHttpMethod": false
 			},
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJpYXQiOjE3MTg1OTI1OTIsImV4cCI6MTcxODY1MjU5MiwiYXVkIjoiOTNjMmMzZGYzODVkYWE5OGEwNDdkMDlmNTBiOGU1ZmEzOTk2ODg2MyIsImRhdGEiOnsidXN1YXJpbyI6InBydWViYSIsInBlcmZpbCI6InNvY2lvIn0sImFwcCI6IlRlc3QgSldUIn0",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
-					"mode": "urlencoded",
-					"urlencoded": [
+					"mode": "formdata",
+					"formdata": [
 						{
-							"key": "usuarioEmpleado",
-							"value": "roberto",
+							"key": "usuario",
+							"value": "jonybhm",
 							"type": "text"
 						},
 						{
-							"key": "contrasenaEmpleado",
-							"value": "holala",
+							"key": "contraseña",
+							"value": "14271824",
 							"type": "text"
 						},
 						{
-							"key": "tipoEmpleado",
+							"key": "credenciales",
 							"value": "mozo",
-							"type": "text"
-						},
-						{
-							"key": "nombreProducto",
-							"value": "cerveza",
-							"type": "text"
-						},
-						{
-							"key": "precioProducto",
-							"value": "450.97",
-							"type": "text"
-						},
-						{
-							"key": "tipoProducto",
-							"value": "bebida",
-							"type": "text"
-						},
-						{
-							"key": "estadoMesa",
-							"value": "abierta",
-							"type": "text"
-						},
-						{
-							"key": "estadoProductoPedido",
-							"value": "listo para entregar",
-							"type": "text"
-						},
-						{
-							"key": "tiempoEstimado",
-							"value": "5",
-							"type": "text"
-						},
-						{
-							"key": "nombreProducto",
-							"value": "pizza",
 							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:1001/servicio/?credenciales=socio&tipoPedido=comida",
+					"raw": "http://localhost:1001/usuarioCSV/exportar",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "1001",
 					"path": [
-						"servicio",
-						""
-					],
-					"query": [
+						"usuarioCSV",
+						"exportar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1001/listasCSV/importar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
 						{
-							"key": "credenciales",
-							"value": "socio"
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTg2NjkwNDgsImV4cCI6MTcxODcyOTA0OCwiYXVkIjoiOTNjMmMzZGYzODVkYWE5OGEwNDdkMDlmNTBiOGU1ZmEzOTk2ODg2MyIsImRhdGEiOnsidXN1YXJpbyI6ImpvbnkyIiwicGVyZmlsIjoic29jaW8ifSwiYXBwIjoiVGVzdCBKV1QifQ.7qWyCg0qwC6dA7kc7LciA0APe7DYIsZpNS5MXJNZLt8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "usuarioEmpleado",
+							"value": "jony2",
+							"type": "text"
 						},
 						{
-							"key": "tipoPedido",
-							"value": "comida"
+							"key": "contrasenaEmpleado",
+							"value": "14271824",
+							"type": "text"
+						},
+						{
+							"key": "tipoEmpleado",
+							"value": "socio",
+							"type": "text"
+						},
+						{
+							"key": "archivo",
+							"type": "file",
+							"src": "postman-cloud:///1ef2d08a-5f17-4db0-b462-01ba318f71e5"
 						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:1001/listasCSV/importar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1001",
+					"path": [
+						"listasCSV",
+						"importar"
 					]
 				}
 			},
