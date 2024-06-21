@@ -74,7 +74,7 @@ class PedidoProductoManejador
             }
             $payload = json_encode(array("mensaje" => $contenidoMensaje.PHP_EOL."Por un total de $".$precioTotal));
 
-            Pedido::ModificarPrecioPedido($precioTotal,$idMesa);
+            Pedido::ModificarPrecioPedido($precioTotal,$idPedido);
         }
 
     $response->getBody()->write($payload);
@@ -107,28 +107,18 @@ class PedidoProductoManejador
                     $tipoPedido = "cerveza";
                     break;                                        
             }
-        }
-
-        $estadoPedido = "pendiente";
-
-               
-        if(empty($estadoPedido))
+        }               
+    
+        $pedido = Pedido::ConsultarPedidoPorEstado("pendiente",$tipoPedido);
+        
+        if($pedido)
         {
-            $payload = json_encode(array("mensaje" => "Error al buscar pedido, no hay pendientes"));
+            $payload = json_encode($pedido);
         }
         else
         {
-            $pedido = Pedido::ConsultarPedidoPorEstado($estadoPedido,$tipoPedido);
-            
-            if($pedido)
-            {
-                $payload = json_encode($pedido);
-            }
-            else
-            {
-                $payload = json_encode(array("mensaje" => "Sin pedidos."));
-            }
-        }
+            $payload = json_encode(array("mensaje" => "Sin pedidos."));
+        }        
 
         $response->getBody()->write($payload);
         
@@ -195,9 +185,18 @@ class PedidoProductoManejador
             }
         }
 
-    $response->getBody()->write($payload);
-    
-    return $response->withHeader('Content-Type', 'application/json');    
+        $pedido = Pedido::ConsultarIdPedidoPorIdProductoPedido($idPedidoProducto);
+        
+        $estadoFinal = PedidoProductoManejador::VerificarEstadoPedido($pedido->id_pedido);
+        Pedido::ModificarEstadoPedido($estadoFinal,$pedido->id_pedido);
+        $tiempoFinal = PedidoProductoManejador::VerificarTiempoFinal($pedido->id_pedido);
+        Pedido::ModificarTiempoPedido($tiempoFinal,$pedido->id_pedido);
+
+        echo PHP_EOL.$estadoFinal." ".$tiempoFinal.PHP_EOL;
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
     
     }
 
@@ -325,6 +324,62 @@ class PedidoProductoManejador
         
         return $response->withHeader('Content-Type', 'application/json'); 
     }
+
+
    
+    static public function VerificarEstadoPedido($idPedidoProducto)
+    {
+        $pedidos = PedidoProducto::TraerTodosLosPedidosProductos($idPedidoProducto);
+        $contadorPreparcion = 0;
+        $contadorListos = 0;
+        $contadorEntregado = 0;
+        $estadoFinal = "";
+        
+        foreach($pedidos as $pedido)
+        {
+            if ($pedido->estado_producto == 'en preparacion')
+            {
+                $contadorPreparcion++;
+                $estadoFinal = "en preparacion";
+            }
+            else if($pedido->estado_producto == "listo para entregar")
+            {
+                $contadorListos++;
+                
+                if($contadorListos==count($pedidos) || ($contadorListos>0 && $contadorEntregado>0 && $contadorPreparcion==0))
+                {
+                    $estadoFinal = "listo para entregar";
+                }
+            }
+            else if($pedido->estado_producto == "entregado")
+            {
+                $contadorEntregado++;
+
+                if($contadorEntregado==count($pedidos))
+                {
+                    $estadoFinal = "entregado";
+                }
+            }
+        }
+
+        return $estadoFinal;
+        
+    }
+
+    static public function VerificarTiempoFinal($idPedidoProducto)
+    {
+        $pedidos = PedidoProducto::TraerTodosLosPedidosProductos($idPedidoProducto);
+        $tiempoFlag = 0;
+        foreach($pedidos as $pedido)
+        {
+            if($pedido->tiempo_estimado > $tiempoFlag)
+            {
+                $tiempoFlag = $pedido->tiempo_estimado;
+            }
+        }
+
+        return $tiempoFlag;
+        
+    }
 }
 

@@ -14,6 +14,9 @@ require_once "./token/JasonWebToken.php";
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->safeLoad();
 
+
+
+
 use FastRoute\RouteCollector;
 use Slim\Psr7\Request;
 use Slim\Factory\AppFactory;
@@ -87,7 +90,7 @@ $app->group('/pedidos',function(RouteCollectorProxy $group)
 $app->group('/tomaPedidos',function(RouteCollectorProxy $group)
 {
     $group->post('[/]', \PedidoProductoManejador::class . ':TomarPedido');
-})->add(new AuthMiddleware(["mozo"]));
+});//->add(new AuthMiddleware(["mozo"]));
 
 
 #---------------------------RECIBO DE PEDIDOS EN COCINA/BARRA---------------------------
@@ -96,7 +99,7 @@ $app->group('/reciboPedidos',function(RouteCollectorProxy $group)
 {
     $group->get('[/]', \PedidoProductoManejador::class . ':RecibirPedidosPendientes');
     $group->put('/{idPedidoProducto}', \PedidoProductoManejador::class . ':ModificarPedidosPendientes');    
-})->add(new AuthMiddleware(["cocinero","bartender","cervecero"]));
+});//->add(new AuthMiddleware(["cocinero","bartender","cervecero"]));
 
 
 #---------------------------ENTREGA PEDIDO EN MESA---------------------------

@@ -82,6 +82,21 @@ class Pedido
 
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
+
+    static public function ConsultarIdPedidoPorIdProductoPedido($idPedidoProducto)
+    {
+
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT productos_pedidos.id_pedido FROM productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto = productos.id WHERE productos_pedidos.id = ? ";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $idPedidoProducto, PDO::PARAM_INT);
+        $consulta -> execute();
+
+        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Pedido');
+        $elemento = $consulta -> fetch();
+        return $elemento;
+    }
     
     static public function ConsultarTodosLosPedidos()
     {
@@ -115,11 +130,45 @@ class Pedido
     static public function ModificarPrecioPedido($precioTotal,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "UPDATE pedidos SET precio_total = ? WHERE id_mesa = ?";
+        $query = "UPDATE pedidos SET precio_total = ? WHERE id = ?";
         try
         {
             $consulta = $pdo->prepare($query);
             $consulta -> bindValue(1,$precioTotal , PDO::PARAM_STR);
+            $consulta -> bindValue(2, $id, PDO::PARAM_STR);
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al modificar elemento: ".$e->getMessage();
+        }
+    }
+   
+    static public function ModificarTiempoPedido($tiempoFinal,$id)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "UPDATE pedidos SET tiempo_final = ? WHERE id = ?";
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1,$tiempoFinal , PDO::PARAM_INT);
+            $consulta -> bindValue(2, $id, PDO::PARAM_STR);
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al modificar elemento: ".$e->getMessage();
+        }
+    }
+
+    static public function ModificarEstadoPedido($estadoFinal,$id)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "UPDATE pedidos SET estado = ? WHERE id = ?";
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1,$estadoFinal , PDO::PARAM_STR);
             $consulta -> bindValue(2, $id, PDO::PARAM_STR);
             $consulta -> execute();
         }

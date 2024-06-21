@@ -6,16 +6,20 @@ include_once "./base_de_datos/BaseDeDatos.php";
 class PedidoProducto
 {
     private $_id;
-    private $_nombreProducto;
-    private $_precioProducto;
-    private $_tipoProducto;
+    private $_idPedido;
+    private $_idProducto;
+    private $_nombreCliente;
+    private $_estadoProducto;
+    private $_tiempoEstimado;
 
-    public function __construct($id = NULL, $nombreProducto = NULL, $precioProducto = NULL, $tipoProducto = NULL)
+    public function __construct($id = NULL, $idPedido = NULL, $idProducto = NULL, $nombreCliente = NULL, $pestadoroducto = NULL, $tiempoEstimado = NULL)
     {
-        $this->_nombreProducto = $nombreProducto;
-        $this->_precioProducto = $precioProducto;
-        $this->_id = $id;        
-        $this->_tipoProducto = $tipoProducto;        
+        $this->_id = $id;
+        $this->_idPedido = $idPedido;
+        $this->_idProducto = $idProducto;
+        $this->_nombreCliente = $nombreCliente;
+        $this->_estadoProducto = $pestadoroducto;
+        $this->_tiempoEstimado = $tiempoEstimado;        
 
     }
     
@@ -82,6 +86,7 @@ class PedidoProducto
     }
     
     
+        #==============================MODIFICAR ESTADO======================================
 
     static public function ModificarProductoPedido($estado,$tiempo,$idPedidoProducto,$tipoProducto)
     {
@@ -105,10 +110,30 @@ class PedidoProducto
 
     }
 
+            #==============================TRAER TODOS LOS ESTADOS======================================
+
+
+    static public function TraerTodosLosPedidosProductos($idPedido)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT * FROM productos_pedidos WHERE id_pedido = ?";
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1, $idPedido, PDO::PARAM_STR);
+            $consulta -> execute();
+            return $consulta -> fetchAll(PDO::FETCH_CLASS, 'PedidoProducto'); 
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al elimiar elemento: ".$e->getMessage();
+        }
+    } 
+
     static public function EliminarPedidoLuegoDeCobrar($idMesa)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "DELETE FROM servicio WHERE id_mesa = ?";
+        $query = "DELETE FROM productos_pedidos WHERE id_mesa = ?";
         try
         {
             $consulta = $pdo->prepare($query);
@@ -121,6 +146,8 @@ class PedidoProducto
         }
     }
 
+    
+    
     
 } 
 
