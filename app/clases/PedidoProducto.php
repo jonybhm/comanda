@@ -109,8 +109,30 @@ class PedidoProducto
         }
 
     }
+    
+    #==============================AGREGAR FOTO======================================
 
-            #==============================TRAER TODOS LOS ESTADOS======================================
+    static public function AgregarFoto($foto,$idMesa)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "UPDATE pedidos SET foto = ? WHERE id_mesa = ?";
+
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1, $foto, PDO::PARAM_LOB);
+            $consulta -> bindValue(2, $idMesa, PDO::PARAM_STR);
+            
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al subir foto: ".$e->getMessage();
+        }
+
+    }
+
+    #==============================TRAER TODOS LOS ESTADOS======================================
 
 
     static public function TraerTodosLosPedidosProductos($idPedido)

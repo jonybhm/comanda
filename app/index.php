@@ -91,6 +91,7 @@ $app->group('/pedidos',function(RouteCollectorProxy $group)
 $app->group('/tomaPedidos',function(RouteCollectorProxy $group)
 {
     $group->post('[/]', \PedidoProductoManejador::class . ':TomarPedido');
+    $group->post('/tomarFoto', \PedidoProductoManejador::class . ':TomarFoto');
 });//->add(new AuthMiddleware(["mozo"]));
 
 

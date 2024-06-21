@@ -82,6 +82,45 @@ class PedidoProductoManejador
     return $response->withHeader('Content-Type', 'application/json');    
     
     }
+    #---------------------------TOMAR FOTO---------------------------
+
+    public function TomarFoto($request,$response, $args)
+    {
+        $fecha = new DateTime(date("d-m-Y"));
+        $rutaArchivo = "./archivos/ImagenesDeLaVenta/2024/";
+
+        if (!is_dir($rutaArchivo)) 
+        {
+            mkdir($rutaArchivo, 0777, true);
+        }
+
+        $parametros = $request->getParsedBody();
+        $archivos = $request->getUploadedFiles();
+        $idMesa = $parametros['idMesa'];
+        $payload = "";
+
+        if (isset($archivos['foto']) && $idMesa) 
+        {
+            $fotoArchivo = $archivos['foto'];            
+        
+            $fotoContenido = $fotoArchivo->getStream()->getContents();
+            
+            PedidoProducto::AgregarFoto($fotoContenido, $idMesa);
+            
+            $payload = json_encode(['mensaje' => 'Foto subida.']);
+            
+        } else {
+            $payload = json_encode(['mensaje' => 'Error al subir foto, uno o más campos vacíos.']);
+        }
+        
+        $destinoImagen = $rutaArchivo.$idMesa."_".date_format($fecha, 'Y-m-d_H-i-s').".jpg";
+        move_uploaded_file($_FILES["foto"]["tmp_name"],$destinoImagen);
+        
+        $response->getBody()->write($payload);
+        return $response->withHeader('Content-Type', 'application/json');
+         
+
+    }
 
     #---------------------------LLEGADA PEDIDOS A COCINA/BARRA---------------------------
 

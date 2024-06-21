@@ -33,9 +33,9 @@ class UsuarioManejador implements IManejadores
         }
 
 
-    $response->getBody()->write($payload);
-    
-    return $response->withHeader('Content-Type', 'application/json');    
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
     
     }
 
@@ -185,14 +185,14 @@ class UsuarioManejador implements IManejadores
     public static function Exportar($request, $response, $args)
     {
         $fecha = new DateTime(date("d-m-Y"));
-        $pathFile = "./archivos";
+        $rutaArchivo = "./archivos";
 
-        if (!is_dir($pathFile)) 
+        if (!is_dir($rutaArchivo)) 
         {
-            mkdir($pathFile, 0777, true);
+            mkdir($rutaArchivo, 0777, true);
         }
     
-        $rutaCompleta = $pathFile . "/ListaUsuarios_".date_format($fecha, 'Y-m-d_H-i-s').".csv";
+        $rutaCompleta = $rutaArchivo . "/ListaUsuarios_".date_format($fecha, 'Y-m-d_H-i-s').".csv";
 
         $archivo = fopen($rutaCompleta, 'w');
 
