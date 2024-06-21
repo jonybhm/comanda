@@ -3,6 +3,7 @@ require_once '../vendor/autoload.php';
 include_once "./manejadores/PedidoProductoManejador.php";
 include_once "./manejadores/UsuarioManejador.php";
 include_once "./manejadores/ProductoManejador.php";
+include_once "./manejadores/EncuestaManejador.php";
 include_once "./manejadores/MesaManejador.php";
 include_once "./manejadores/PedidoManejador.php";
 include_once "./manejadores/TokenManejador.php";
@@ -144,6 +145,13 @@ $app->group('/listasCSV', function (RouteCollectorProxy $group)
     $group->post('/importar', \UsuarioManejador::class . ':Importar');
     $group->get('/exportar', \UsuarioManejador::class . ':Exportar');
 })->add(new AuthMiddleware(["socio"]));
+
+#-------------------------CLIENTES--------------------------------
+$app->group('/clientes', function (RouteCollectorProxy $group)
+{
+    $group->post('/encuesta', \EncuestaManejador::class . ':RealizarEncuesta');
+    $group->get('/tiempoEspera', \EncuestaManejador::class . ':ObtenerTiempoEspera');
+});
 
 
 $app->run();
