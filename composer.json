@@ -10,6 +10,7 @@
          "guzzlehttp/psr7": "^1.8",
          "http-interop/http-factory-guzzle": "^1.0",
          "laminas/laminas-diactoros": "^2.8",
-         "vlucas/phpdotenv": "*"
+         "vlucas/phpdotenv": "*",
+        "tecnickcom/tcpdf": "^6.7"
         }
     }

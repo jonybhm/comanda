@@ -18,45 +18,7 @@ class Producto
         $this->_tipoProducto = $tipoProducto;
     }
     
-    public function getId()
-    {
-        return $this->_id;
-    }
-
-    public function getNombre()
-    {
-        return $this->_nombreProducto;
-    }
-
-    public function getPrecio()
-    {
-        return $this->_precioProducto;
-    }
-
-    public function getTipo()
-    {
-        return $this->_tipoProducto;
-    }
-
-    public function setId($id)
-    {
-        return $this->_id = $id;
-    }
-
-    public function setNombre($nombreProducto)
-    {
-        return $this->_nombreProducto = $nombreProducto;
-    }
-
-    public function setPrecio($precioProducto)
-    {
-        return $this->_precioProducto = $precioProducto;
-    }
-
-    public function setTipo($tipoProducto)
-    {
-        return $this->_tipoProducto = $tipoProducto;
-    }
+  
 
 
     static public function AltaProducto($nombre,$precio,$tipo)

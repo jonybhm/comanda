@@ -7,6 +7,7 @@ include_once "./manejadores/EncuestaManejador.php";
 include_once "./manejadores/MesaManejador.php";
 include_once "./manejadores/PedidoManejador.php";
 include_once "./manejadores/TokenManejador.php";
+include_once "./manejadores/ArchivoManejador.php";
 
 require_once "./middlewares/AuthMiddleware.php";
 require_once "./token/JasonWebToken.php";
@@ -141,11 +142,10 @@ $app->group('/login',function(RouteCollectorProxy $group)
 #---------------------------ARCHIVOS---------------------------
 
 
-$app->group('/listasCSV', function (RouteCollectorProxy $group)
-{
-    $group->post('/importar', \UsuarioManejador::class . ':Importar');
-    $group->get('/exportar', \UsuarioManejador::class . ':Exportar');
-})->add(new AuthMiddleware(["socio"]));
+$app->group('/producto', function (RouteCollectorProxy $group) {
+    $group->post('/importar', \ArchivoManejador::class . ':Importar');
+    $group->get('/exportar', \ArchivoManejador::class . ':Exportar');
+  });//->add(new AuthMiddleware(["socio"]));
 
 #-------------------------CLIENTES--------------------------------
 $app->group('/clientes', function (RouteCollectorProxy $group)
