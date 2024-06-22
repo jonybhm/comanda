@@ -22,61 +22,10 @@ class Usuario
 
     }
 
-    public function getId()
-    {
-        return $this->_id;
-    }
-
-    public function getNombre()
-    {
-        return $this->_nombreUsuario;
-    }
-
-    public function getPassword()
-    {
-        return $this->_password;
-    }
-
-    public function getTipo()
-    {
-        return $this->_tipoEmpleado;
-    }
-
-    public function getIngreso()
-    {
-        return $this->_fechaIngreso;
-    }
-
-    public function setId($id)
-    {
-        return $this->_id = $id;
-    }
-
-    public function setNombre($nombreUsuario)
-    {
-        return $this->_nombreUsuario = $nombreUsuario;
-    }
-
-    public function setPassword($password)
-    {
-        return $this->_password = $password;
-    }
-
-    public function setTipo($tipoEmpleado)
-    {
-        return $this->_tipoEmpleado = $tipoEmpleado;
-    }
-
-    public function setIngreso($fechaIngreso)
-    {
-        return $this->_fechaIngreso = $fechaIngreso;
-    }
     static public function AltaUsuario($nombreUsuario,$password,$tipo)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "INSERT INTO usuarios (nombre_usuario, contraseña, tipo_empleado, fecha_ingreso) VALUES (?,?,?,?)";
-
-        $fecha = new DateTime(date("d-m-Y"));
+        $query = "INSERT INTO usuarios (nombre_usuario, contraseña, tipo_empleado) VALUES (?,?,?)";
 
         try
         {
@@ -84,7 +33,6 @@ class Usuario
             $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_STR);
             $consulta -> bindValue(2, password_hash($password,PASSWORD_DEFAULT));
             $consulta -> bindValue(3, $tipo, PDO::PARAM_STR);
-            $consulta -> bindValue(4, date_format($fecha, 'Y-m-d H:i:s'), PDO::PARAM_STR);
             $consulta -> execute();
         }
         catch(PDOException $e)
@@ -107,6 +55,21 @@ class Usuario
         $elemento = $consulta -> fetch();
         return $elemento;
     }
+
+    static public function ConsultarUsuarioPorNombre($nombreUsuario)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
+        
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_INT);
+        $consulta -> execute();
+
+        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Usuario');
+        $elemento = $consulta -> fetch();
+        return $elemento;
+    }
+    
     
     static public function ConsultarTodosLosUsuarios()
     {
@@ -180,7 +143,6 @@ class Usuario
                 }
             }   
             
-            echo $password.PHP_EOL.$hash.PHP_EOL;
 
             $contrasenaValida = password_verify($password,$hash);
             
@@ -198,7 +160,7 @@ class Usuario
         {
             echo "Error al buscar usuario: ".$e->getMessage();
         }
-    }
+    }  
     
 } 
 

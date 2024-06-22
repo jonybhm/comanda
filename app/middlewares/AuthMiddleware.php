@@ -45,6 +45,7 @@ class AuthMiddleware
             
             if(in_array($data->perfil,$this->_perfiles))
             {
+                $request = $request->withAttribute('user_data', $data);
                 $response = $requestHandler->handle($request);
             }
             else

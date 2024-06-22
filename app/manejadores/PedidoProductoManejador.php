@@ -1,7 +1,7 @@
 <?php
 include_once "./clases/Pedido.php";
 include_once "./clases/Mesa.php";
-
+include_once "./clases/Estadistica.php";
 include_once "./clases/PedidoProducto.php";
 include_once "./auxiliar/auxiliar.php";
 
@@ -77,9 +77,13 @@ class PedidoProductoManejador
             Pedido::ModificarPrecioPedido($precioTotal,$idPedido);
         }
 
-    $response->getBody()->write($payload);
-    
-    return $response->withHeader('Content-Type', 'application/json');    
+        $usuario = $request->getAttribute('user_data'); 
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." toma pedidos de clientes" );
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
     
     }
     #---------------------------TOMAR FOTO---------------------------
@@ -115,6 +119,10 @@ class PedidoProductoManejador
         
         $destinoImagen = $rutaArchivo.$idMesa."_".date_format($fecha, 'Y-m-d_H-i-s').".jpg";
         move_uploaded_file($_FILES["foto"]["tmp_name"],$destinoImagen);
+
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."toma foto de la mesa");
         
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -158,6 +166,10 @@ class PedidoProductoManejador
         {
             $payload = json_encode(array("mensaje" => "Sin pedidos."));
         }        
+
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos pendientes" );
 
         $response->getBody()->write($payload);
         
@@ -233,6 +245,10 @@ class PedidoProductoManejador
 
         echo PHP_EOL.$estadoFinal." ".$tiempoFinal.PHP_EOL;
 
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."cambio el estado de pedido a: ".$estadoFinal );
+
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json');    
@@ -264,6 +280,9 @@ class PedidoProductoManejador
         
         $payload = json_encode($arrayMensaje);
         
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos listos para entregar" );
 
         $response->getBody()->write($payload);
         
@@ -301,6 +320,10 @@ class PedidoProductoManejador
             
         }
 
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."entrega pedidos en mesa" );  
+
         $response->getBody()->write($payload);
 
         return $response->withHeader('Content-Type', 'application/json');    
@@ -334,6 +357,11 @@ class PedidoProductoManejador
             echo PHP_EOL."pago exitoso";
             PedidoProducto::EliminarPedidoLuegoDeCobrar($idMesa);
         }
+
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cobro a los clientes en mesa ".$idMesa);
+
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json');          
@@ -358,12 +386,16 @@ class PedidoProductoManejador
             $payload = json_encode(array("mensaje" => "Mesa cerrada"));            
         }
       
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cerró la mesa." );
 
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json'); 
     }
 
+    #---------------------------VERIFICACIONES---------------------------
 
    
     static public function VerificarEstadoPedido($idPedidoProducto)

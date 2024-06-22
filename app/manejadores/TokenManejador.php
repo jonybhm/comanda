@@ -2,13 +2,15 @@
 
 include_once "./token/JasonWebToken.php";
 include_once "./clases/Usuario.php";
+include_once "./clases/Estadistica.php";
 include_once "./auxiliar/auxiliar.php";
 
 class TokenManejador
 {
     public function IngresarYGenerarToken($request,$response, $args)
     {
-        $parametros = $request->getParsedBody();
+        $jsonData = file_get_contents('php://input');
+        $parametros = json_decode($jsonData,true);
 
         $nombreUsuario = $parametros['usuarioEmpleado'];
         $contraseña = $parametros['contrasenaEmpleado'];
@@ -19,21 +21,9 @@ class TokenManejador
         if($usuario)
         {  
 
-            $datos = array('usuario' => "",'perfil' => "");
+            $datos = array('usuario' => $usuario->nombre_usuario,'perfil' => $usuario->tipo_empleado);
             
-            foreach($usuario as $key => $value)
-            {
-                switch($key)
-                {
-                    case "nombre_usuario":
-                        $datos['usuario'] = $value;
-                        break;   
-                    case "tipo_empleado":
-                        $datos['perfil'] = $value;
-                        break;                                       
-                }
-            }   
-        
+                   
             $token = JasonWebToken::CrearToken($datos);
             $payload = json_encode(array('jwt' => $token));
         } 
@@ -42,6 +32,8 @@ class TokenManejador
             $payload = json_encode(array('error' => 'Usuario o contraseña incorrectos'));
         }
     
+        Estadistica::RegistrarLog($usuario->id,"El usuario ".$usuario->nombre_usuario." ha iniciado sesion.");
+
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
 

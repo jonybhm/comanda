@@ -93,7 +93,7 @@ $app->group('/tomaPedidos',function(RouteCollectorProxy $group)
 {
     $group->post('[/]', \PedidoProductoManejador::class . ':TomarPedido');
     $group->post('/tomarFoto', \PedidoProductoManejador::class . ':TomarFoto');
-});//->add(new AuthMiddleware(["mozo"]));
+})->add(new AuthMiddleware(["mozo"]));
 
 
 #---------------------------RECIBO DE PEDIDOS EN COCINA/BARRA---------------------------
@@ -102,7 +102,7 @@ $app->group('/reciboPedidos',function(RouteCollectorProxy $group)
 {
     $group->get('[/]', \PedidoProductoManejador::class . ':RecibirPedidosPendientes');
     $group->put('/{idPedidoProducto}', \PedidoProductoManejador::class . ':ModificarPedidosPendientes');    
-});//->add(new AuthMiddleware(["cocinero","bartender","cervecero"]));
+})->add(new AuthMiddleware(["cocinero","bartender","cervecero"]));
 
 
 #---------------------------ENTREGA PEDIDO EN MESA---------------------------
@@ -145,7 +145,7 @@ $app->group('/login',function(RouteCollectorProxy $group)
 $app->group('/producto', function (RouteCollectorProxy $group) {
     $group->post('/importar', \ArchivoManejador::class . ':Importar');
     $group->get('/exportar', \ArchivoManejador::class . ':Exportar');
-  });//->add(new AuthMiddleware(["socio"]));
+  })->add(new AuthMiddleware(["socio"]));
 
 #-------------------------CLIENTES--------------------------------
 $app->group('/clientes', function (RouteCollectorProxy $group)
