@@ -48,6 +48,7 @@ class Mesa
         return $elemento;
     }
     
+    
     static public function ConsultarTodasLasMesas()
     {
         $pdo = AccederABaseDeDatos('comanda');

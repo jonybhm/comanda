@@ -8,6 +8,8 @@ include_once "./manejadores/MesaManejador.php";
 include_once "./manejadores/PedidoManejador.php";
 include_once "./manejadores/TokenManejador.php";
 include_once "./manejadores/ArchivoManejador.php";
+include_once "./manejadores/EstadisticaManejador.php";
+
 
 require_once "./middlewares/AuthMiddleware.php";
 require_once "./token/JasonWebToken.php";
@@ -146,6 +148,16 @@ $app->group('/producto', function (RouteCollectorProxy $group) {
     $group->post('/importar', \ArchivoManejador::class . ':Importar');
     $group->get('/exportar', \ArchivoManejador::class . ':Exportar');
   })->add(new AuthMiddleware(["socio"]));
+
+
+#---------------------------ESTADISTICAS---------------------------
+
+$app->group('/estadistica', function (RouteCollectorProxy $group) {
+    $group->get('/mejoresComentarios', \EstadisticaManejador::class . ':ObtenerMejoresEncuestas');
+    $group->get('/mesaMasUsada', \EstadisticaManejador::class . ':ObtenerMesaMasUsada');
+    $group->get('/pedidosTardios', \EstadisticaManejador::class . ':ObtenerPedidoEntregadosFueraDeTiempo');
+
+})->add(new AuthMiddleware(["socio"]));
 
 #-------------------------CLIENTES--------------------------------
 $app->group('/clientes', function (RouteCollectorProxy $group)

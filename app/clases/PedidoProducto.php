@@ -88,10 +88,10 @@ class PedidoProducto
     
         #==============================MODIFICAR ESTADO======================================
 
-    static public function ModificarProductoPedido($estado,$tiempo,$idPedidoProducto,$tipoProducto)
+    static public function ModificarProductoPedido($estado,$tiempo,$idPedidoProducto)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "UPDATE productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto = productos.id SET estado_producto = ?, tiempo_estimado = ? WHERE productos_pedidos.id = ? AND productos.tipo_producto = ?";
+        $query = "UPDATE productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto = productos.id SET estado_producto = ?, tiempo_estimado = ? WHERE productos_pedidos.id = ?";
 
         try
         {
@@ -100,7 +100,6 @@ class PedidoProducto
             $consulta -> bindValue(2, $tiempo, PDO::PARAM_STR);
             $consulta -> bindValue(3, $idPedidoProducto, PDO::PARAM_STR);
             //echo $tipoProducto;
-            $consulta -> bindValue(4, $tipoProducto, PDO::PARAM_STR);
             $consulta -> execute();
         }
         catch(PDOException $e)

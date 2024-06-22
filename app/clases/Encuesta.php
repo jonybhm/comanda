@@ -65,7 +65,17 @@ class Encuesta
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
 
+    static public function ConsultarTopCincoEncuestas()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT * FROM encuesta ORDER BY puntaje_restaurante DESC LIMIT 5";
         
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Encuesta');
+        
+    }
 } 
 
 

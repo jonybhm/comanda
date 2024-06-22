@@ -1,8 +1,9 @@
 <?php
 
+
 include_once "./token/JasonWebToken.php";
 include_once "./clases/Usuario.php";
-include_once "./clases/Estadistica.php";
+include_once "./clases/Log.php";
 include_once "./auxiliar/auxiliar.php";
 
 class TokenManejador
@@ -32,7 +33,8 @@ class TokenManejador
             $payload = json_encode(array('error' => 'Usuario o contraseña incorrectos'));
         }
     
-        Estadistica::RegistrarLog($usuario->id,"El usuario ".$usuario->nombre_usuario." ha iniciado sesion.");
+
+        LogUsuario::RegistrarLog($usuario->id,"El usuario ".$usuario->nombre_usuario." ha iniciado sesion.");
 
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');

@@ -1,8 +1,12 @@
 <?php
+
+use Illuminate\Support\Facades\Log;
+
 include_once "./clases/Pedido.php";
 include_once "./clases/Mesa.php";
-include_once "./clases/Estadistica.php";
+include_once "./clases/Log.php";
 include_once "./clases/PedidoProducto.php";
+include_once "./clases/TiempoEntrega.php";
 include_once "./auxiliar/auxiliar.php";
 
 class PedidoProductoManejador
@@ -79,7 +83,7 @@ class PedidoProductoManejador
 
         $usuario = $request->getAttribute('user_data'); 
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." toma pedidos de clientes" );
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." toma pedidos de clientes" );
 
         $response->getBody()->write($payload);
         
@@ -122,7 +126,7 @@ class PedidoProductoManejador
 
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."toma foto de la mesa");
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."toma foto de la mesa");
         
         $response->getBody()->write($payload);
         return $response->withHeader('Content-Type', 'application/json');
@@ -135,14 +139,12 @@ class PedidoProductoManejador
     public function RecibirPedidosPendientes($request,$response, $args)
     {
 
-        $params = $request->getQueryParams();
+        $usuario = $request->getAttribute('user_data');  
 
-        if(isset($params["credenciales"]))
+        if($usuario)
         {
-            $tipoPedido = "";
-            $credenciales = $params ["credenciales"];
-            
-            switch($credenciales)
+            $tipoPedido = "";            
+            switch($usuario->perfil)
             {
                 case "cocinero":
                     $tipoPedido = "comida";
@@ -169,7 +171,7 @@ class PedidoProductoManejador
 
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos pendientes" );
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos pendientes" );
 
         $response->getBody()->write($payload);
         
@@ -183,27 +185,8 @@ class PedidoProductoManejador
 
     public function ModificarPedidosPendientes($request,$response, $args)
     {
-        $params = $request->getQueryParams();
-
-        if(isset($params["credenciales"]))
-        {
-            $tipoProducto = "";
-            $credenciales = $params ["credenciales"];
-            
-            switch($credenciales)
-            {
-                case "cocinero":
-                    $tipoProducto = "comida";
-                    break;
-                case "bartender":
-                    $tipoProducto = "bebida";
-                    break; 
-                case "cervecero":
-                    $tipoProducto = "cerveza";
-                    break;                                        
-            }
-        }
-
+        $usuario = $request->getAttribute('user_data');  
+       
         $idPedidoProducto = $args['idPedidoProducto'];
         
         $parametros = $request->getParsedBody();    
@@ -231,13 +214,13 @@ class PedidoProductoManejador
             }
             else
             {
-                PedidoProducto::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idPedidoProducto,$tipoProducto);
+                PedidoProducto::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idPedidoProducto);
                 $payload = json_encode(array("mensaje" => "Estado del pedido ".$idPedidoProducto." modificado con exito a: '".$estadoPedidoProducto."'"));
             }
         }
 
+        //VERIFICAR que AL MENOS UN ELEMENTO ESTE EN PREPARACION 
         $pedido = Pedido::ConsultarIdPedidoPorIdProductoPedido($idPedidoProducto);
-        
         $estadoFinal = PedidoProductoManejador::VerificarEstadoPedido($pedido->id_pedido);
         Pedido::ModificarEstadoPedido($estadoFinal,$pedido->id_pedido);
         $tiempoFinal = PedidoProductoManejador::VerificarTiempoFinal($pedido->id_pedido);
@@ -245,10 +228,15 @@ class PedidoProductoManejador
 
         echo PHP_EOL.$estadoFinal." ".$tiempoFinal.PHP_EOL;
 
-        $usuario = $request->getAttribute('user_data');         
-        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."cambio el estado de pedido a: ".$estadoFinal );
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);     
 
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."cambio el estado de pedido a: ".$estadoFinal );
+
+        //CREAR NUEVO TEIMPO ESPERA
+        if($estadoPedidoProducto == "en preparacion")
+        {
+            TiempoEspera::AltaTiempoEspera($idPedidoProducto,$tiempoEstimado,$pedido->id_pedido);
+        }
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json');    
@@ -282,7 +270,7 @@ class PedidoProductoManejador
         
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos listos para entregar" );
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos listos para entregar" );
 
         $response->getBody()->write($payload);
         
@@ -295,16 +283,7 @@ class PedidoProductoManejador
     {
         $idPedidoProducto = $args['idPedidoProducto'];
         
-        $parametros = $request->getParsedBody();    
-
-        if (!$parametros) 
-        {
-            $payload = json_encode(array("mensaje" => "No se recibieron los datos correctamente."));
-            $response->getBody()->write($payload);
-            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
-        }
-
-        $tipoProducto = $parametros['tipoProducto'];
+        
         
         if(empty($idPedidoProducto))
         {
@@ -315,14 +294,24 @@ class PedidoProductoManejador
         
             Mesa::ModificarMesa("con cliente comiendo",$idPedidoProducto);
 
-            PedidoProducto::ModificarProductoPedido("entregado",0,$idPedidoProducto,$tipoProducto);
+            PedidoProducto::ModificarProductoPedido("entregado",0,$idPedidoProducto);
             $payload = json_encode(array("mensaje" => "pedido ".$idPedidoProducto." entregado con exito"));
             
         }
 
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."entrega pedidos en mesa" );  
+        $logId = LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."entrega pedidos en mesa" );  
+
+        #Verificar que todos los elementos del pedido esten entregados
+        $pedido = Pedido::ConsultarIdPedidoPorIdProductoPedido($idPedidoProducto);        
+        $estadoFinal = PedidoProductoManejador::VerificarEstadoPedido($pedido->id_pedido);
+        Pedido::ModificarEstadoPedido($estadoFinal,$pedido->id_pedido);
+
+        //MODIFICAR TIEMPOESPERA
+        $HoraPedidoEnPreparacion = LogUsuario::ObtenerLog($logId)->fecha_hora;
+        TiempoEspera::ModificarTiempoEsperaFinal($HoraPedidoEnPreparacion,$idPedidoProducto);
+        TiempoEspera::ModificarTiempoEsperaAtrasado();
 
         $response->getBody()->write($payload);
 
@@ -360,7 +349,7 @@ class PedidoProductoManejador
 
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cobro a los clientes en mesa ".$idMesa);
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cobro a los clientes en mesa ".$idMesa);
 
         $response->getBody()->write($payload);
         
@@ -388,7 +377,7 @@ class PedidoProductoManejador
       
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        Estadistica::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cerró la mesa." );
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cerró la mesa." );
 
         $response->getBody()->write($payload);
         
