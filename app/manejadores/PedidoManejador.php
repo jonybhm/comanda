@@ -19,10 +19,6 @@ class PedidoManejador implements IManejadores
         
         $idMesa = $parametros['idMesa'];
         $nombreCliente = $parametros['nombreCliente'];
-        // $estadoPedido = $parametros['estadoPedido'];
-        // $precioTotal = $parametros['precioTotal'];
-        // $tiempoPreparacion = $parametros['tiempoPreparacion'];
-        // $foto = $parametros['foto'];
 
         Pedido::AltaPedido($idMesa,$nombreCliente);
         $payload = json_encode(array("mensaje" => "Pedido creada con exito"));

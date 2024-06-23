@@ -81,6 +81,40 @@ class Usuario
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
+    static public function ConsultarCantidadOPeracionesUsuarioSector($tipoEmpleado)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT usuarios.tipo_empleado, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? GROUP BY usuarios.tipo_empleado DESC ";
+        
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $tipoEmpleado, PDO::PARAM_INT);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
+    }
+
+    static public function ConsultarCantidadOPeracionesUsuarioSectoryNombre($tipoEmpleado,$nombreUsuario)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT usuarios.nombre_usuario, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? AND usuarios.nombre_usuario=? GROUP BY usuarios.tipo_empleado ORDER BY cantidad_operaciones DESC ";
+        
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $tipoEmpleado, PDO::PARAM_INT);
+        $consulta -> bindValue(2, $nombreUsuario, PDO::PARAM_STR);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
+    }
+
+    static public function ConsultarLogeoUsuario($nombreUsuario)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT usuarios.nombre_usuario, log_usuarios.accion_tomada, COUNT(log_usuarios.id_usuario) AS cantidad FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.nombre_usuario=? AND accion_tomada LIKE '%sesion%' ";
+        
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_INT);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
+    }
+
     static public function ModificarUsuario($nombreUsuario,$password,$tipo,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');

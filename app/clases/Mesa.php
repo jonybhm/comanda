@@ -58,6 +58,30 @@ class Mesa
         $consulta -> execute();
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
     }
+    
+    static public function ConsultarMesasPorOrdenDeFacturacion()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa GROUP BY mesas.id ORDER BY facturado DESC";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
+    }
+
+
+    static public function ConsultarFacturacionMesasEntreFechas($fechaMin,$fechaMax,$idMesa)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa WHERE mesas.id = ? AND fecha BETWEEN ? AND ?";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $idMesa, PDO::PARAM_STR);
+        $consulta -> bindValue(2, $fechaMin, PDO::PARAM_STR);
+        $consulta -> bindValue(3, $fechaMax, PDO::PARAM_STR);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
+    }
 
     static public function ModificarMesa($estado,$id)
     {

@@ -156,6 +156,12 @@ $app->group('/estadistica', function (RouteCollectorProxy $group) {
     $group->get('/mejoresComentarios', \EstadisticaManejador::class . ':ObtenerMejoresEncuestas');
     $group->get('/mesaMasUsada', \EstadisticaManejador::class . ':ObtenerMesaMasUsada');
     $group->get('/pedidosTardios', \EstadisticaManejador::class . ':ObtenerPedidoEntregadosFueraDeTiempo');
+    $group->get('/mesasTop', \EstadisticaManejador::class . ':ObtenerMesasPorOrdenDeFacturacion');
+    $group->get('/mesasEntreFechas', \EstadisticaManejador::class . ':ObtenerMesasEntreFechas');
+    $group->get('/productosTop', \EstadisticaManejador::class . ':ObtenerPedidoVendidosDescendente');
+    $group->get('/logeos/{nombreUsuario}', \EstadisticaManejador::class . ':ObtenerLogeoUsuarioEspecifico');
+    $group->get('/{tipoEmpleado}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarios');
+    $group->get('/{tipoEmpleado}/{nombreUsuario}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarioEspecifico');
 
 })->add(new AuthMiddleware(["socio"]));
 

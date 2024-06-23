@@ -11,9 +11,10 @@ class Pedido
     private $_estadoPedido;
     private $_tiempoPreparacion;
     private $_precioTotal;
-    private $_foto;    
+    private $_foto;
+    private $_fecha;    
 
-    public function __construct($id = NULL, $idMesa = NULL, $nombreCliente = NULL, $estadoPedido = NULL, $tiempoPreparacion = NULL, $precioTotal = NULL, $foto = NULL)
+    public function __construct($id = NULL, $idMesa = NULL, $nombreCliente = NULL, $estadoPedido = NULL, $tiempoPreparacion = NULL, $precioTotal = NULL, $foto = NULL,  $fecha = NULL)
     {
         $this->_id = $id;
         $this->_idMesa = $idMesa;
@@ -21,7 +22,8 @@ class Pedido
         $this->_estadoPedido = $estadoPedido;
         $this->_tiempoPreparacion = $tiempoPreparacion;
         $this->_precioTotal = $precioTotal;
-        $this->_foto = $foto;        
+        $this->_foto = $foto;   
+        $this->_fecha = $fecha;        
     }
     
     public function getId()
@@ -40,10 +42,6 @@ class Pedido
             $consulta -> bindValue(1,$claveAlfaNumerica , PDO::PARAM_STR);
             $consulta -> bindValue(2,$idMesa , PDO::PARAM_STR);
             $consulta -> bindValue(3,$nombreCliente , PDO::PARAM_STR);
-            // $consulta -> bindValue(4,$estadoPedido , PDO::PARAM_STR);
-            // $consulta -> bindValue(5,$precioTotal , PDO::PARAM_STR);
-            //$consulta -> bindValue(6,$tiempoPreparacion , PDO::PARAM_INT);
-            //$consulta -> bindValue(7,$foto , PDO::PARAM_LOB);
             $consulta -> execute();
             return $claveAlfaNumerica;
         }
