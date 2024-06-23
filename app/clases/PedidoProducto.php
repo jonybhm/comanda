@@ -108,6 +108,27 @@ class PedidoProducto
         }
 
     }
+        #==============================CANCELAR PEDIDOS======================================
+
+    static public function CancelarProductoPedido($estado,$idPedido)
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "UPDATE productos_pedidos SET estado_producto = ? WHERE id_pedido = ?";
+
+        try
+        {
+            $consulta = $pdo->prepare($query);
+            $consulta -> bindValue(1, $estado, PDO::PARAM_STR);
+            $consulta -> bindValue(2, $idPedido, PDO::PARAM_STR);
+            //echo $tipoProducto;
+            $consulta -> execute();
+        }
+        catch(PDOException $e)
+        {
+            echo "Error al modificar elemento: ".$e->getMessage();
+        }
+
+    }
     
     #==============================AGREGAR FOTO======================================
 

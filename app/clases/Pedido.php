@@ -95,7 +95,21 @@ class Pedido
         $elemento = $consulta -> fetch();
         return $elemento;
     }
-    
+
+    static public function ConsultarIdMesaPorIdPedido($idPedido)
+    {
+
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT pedidos.id_mesa FROM pedidos INNER JOIN productos_pedidos ON productos_pedidos.id_pedidos = pedidos.id WHERE pedidos.id = ? ";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $idPedido, PDO::PARAM_INT);
+        $consulta -> execute();
+
+        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Pedido');
+        $elemento = $consulta -> fetch();
+        return $elemento;
+    }
     static public function ConsultarTodosLosPedidos()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -206,8 +220,22 @@ class Pedido
         $elemento = $consulta -> fetch();
         return $elemento;
     }
-    
-    
+
+    static public function ConsultarPedidoEntregados($idPedido)
+    {
+
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT * FROM pedidos WHERE estado = 'entregado' AND id_pedido=?'";
+
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> bindValue(1, $idPedido, PDO::PARAM_STR);
+        $consulta -> execute();
+
+        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Pedido');
+        $elemento = $consulta -> fetch();
+        return $elemento;
+    }
 } 
 
 

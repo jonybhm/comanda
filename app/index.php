@@ -115,6 +115,12 @@ $app->group('/entregaPedidos',function(RouteCollectorProxy $group)
     $group->put('/{idPedidoProducto}', \PedidoProductoManejador::class . ':ServirPedido');
 })->add(new AuthMiddleware(["mozo"]));
 
+$app->group('/cancelarPedido',function(RouteCollectorProxy $group)
+{
+    $group->put('/{idPedido}', \PedidoProductoManejador::class . ':CancelarPedido');
+
+})->add(new AuthMiddleware(["mozo"]));
+
 
 #---------------------------COBRO DE PEDIDOS A CLIENTES---------------------------
 

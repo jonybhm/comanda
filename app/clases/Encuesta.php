@@ -12,9 +12,10 @@ class Encuesta
     private $_idPedido;
     private $_puntajeMozo;
     private $_puntajeCocinero;
-    private $_comentario;    
+    private $_comentario;  
+    private $_fecha;    
 
-    public function __construct($id = NULL, $puntajeMesa = NULL, $puntajeRestaurante = NULL, $idMesa = NULL, $idPedido = NULL, $puntajeMozo = NULL, $comentario = NULL, $puntajeCocinero = NULL)
+    public function __construct($id = NULL, $puntajeMesa = NULL, $fecha = NULL, $puntajeRestaurante = NULL, $idMesa = NULL, $idPedido = NULL, $puntajeMozo = NULL, $comentario = NULL, $puntajeCocinero = NULL)
     {
         $this->_id = $id;
         $this->_puntajeMesa = $puntajeMesa;
@@ -24,6 +25,7 @@ class Encuesta
         $this->_puntajeMozo = $puntajeMozo;
         $this->_puntajeCocinero = $puntajeCocinero;
         $this->_comentario = $comentario;        
+        $this->_fecha = $fecha;        
     }
     
     static public function AltaEncuesta($puntajeMesa,$puntajeRestaurante,$idMesa,$idPedido,$puntajeMozo,$comentario,$puntajeCocinero)

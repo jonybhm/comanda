@@ -319,22 +319,55 @@ class PedidoProductoManejador
     
     }
 
+
+    #---------------------------CANCELAR PEDIDOS---------------------------
+
+
+    public function CancelarPedido($request,$response, $args)
+    {
+        $idPedido = $args['idPedido'];       
+        
+        
+        if(empty($idPedido))
+        {
+            $payload = json_encode(array("mensaje" => "Error al buscar el pedido, campo id vacio."));
+        }
+        else
+        {
+            Pedido::ModificarEstadoPedido("cancelado",$idPedido);
+            PedidoProducto::CancelarProductoPedido("cancelado",$idPedido);
+            $payload = json_encode(array("mensaje" => "pedido ".$idPedido." cancelado con exito"));
+            
+        }
+
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        $logId = LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."cancelo pedidos" );  
+
+
+        $response->getBody()->write($payload);
+
+        return $response->withHeader('Content-Type', 'application/json');    
+    
+    }
+
+
     #---------------------------COBRAR CLIENTES---------------------------
 
 
     public function CobrarPedido($request,$response, $args)
     {
-        $idMesa = $args['idMesa'];
-        
+        $idPedido = $args['idPedido'];
         
         $estado = "con cliente pagando";
         
-        if(empty($idMesa))
+        if(empty($idPedido))
         {
             $payload = json_encode(array("mensaje" => "Error al buscar mesa, campo id vacio."));
         }
         else
         {
+            $idMesa = Pedido::ConsultarIdMesaPorIdPedido($idPedido);
             Mesa::ModificarMesa($estado,$idMesa);
             $payload = json_encode(array("mensaje" => "Cobrando Mesa"));            
         }
@@ -344,12 +377,12 @@ class PedidoProductoManejador
         if($pagoExitoso)
         {
             echo PHP_EOL."pago exitoso";
-            PedidoProducto::EliminarPedidoLuegoDeCobrar($idMesa);
+            PedidoProducto::EliminarPedidoLuegoDeCobrar($idPedido);
         }
 
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
-        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cobro a los clientes en mesa ".$idMesa);
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario." cobro a los clientes en mesa ".$idPedido);
 
         $response->getBody()->write($payload);
         

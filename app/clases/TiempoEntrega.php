@@ -18,7 +18,8 @@ class TiempoEspera
         $this->_entrega_real = $entrega_real;
         $this->_entregaTardia = $entregaTardia;
     }
-
+    
+    //ESTE SE USA CUANDO CAMBIA EL ESTADO A "EN PREPARACION"
     static public function AltaTiempoEspera($idPedidoProducto,$entregaEstimada,$idPedido)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -39,6 +40,7 @@ class TiempoEspera
 
     }    
 
+    //ESTE SE USA CUANDO CAMBIA EL ESTADO A "ENTREGADO"
     static public function ModificarTiempoEsperaFinal($tiempoFinal,$idPedidoProducto)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -58,6 +60,7 @@ class TiempoEspera
 
     }
 
+    //ESTE SE USA CUANDO CAMBIA EL ESTADO A "EN PREPARACION" (AL MISMO TIEMPO QUE EL ANTERIOR)
     static public function ModificarTiempoEsperaAtrasado()
     {
         $pdo = AccederABaseDeDatos('comanda');
