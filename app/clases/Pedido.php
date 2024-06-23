@@ -110,6 +110,7 @@ class Pedido
         $elemento = $consulta -> fetch();
         return $elemento;
     }
+
     static public function ConsultarTodosLosPedidos()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -119,6 +120,17 @@ class Pedido
         $consulta -> execute();
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');     
     }
+
+    static public function ConsultarCancelados()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT id FROM pedidos WHERE estado = 'cancelado'";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');     
+    }
+
 
     static public function ModificarPedido($estadoPedido,$tiempoPreparacion,$precioTotal,$id)
     {
@@ -210,15 +222,26 @@ class Pedido
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT *, COUNT(id_mesa) FROM pedidos ORDER BY COUNT(id_mesa) DESC LIMIT 1";
+        $query = "SELECT *, COUNT(id_mesa) FROM pedidos GROUP BY id_mesa ORDER BY COUNT(id_mesa) DESC LIMIT 1";
 
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();
 
-        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Pedido');
-        $elemento = $consulta -> fetch();
-        return $elemento;
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');  
+    }
+
+    static public function ConsultarPedidoMesaMenosUsada()
+    {
+
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT *, COUNT(id_mesa) FROM pedidos GROUP BY id_mesa ORDER BY COUNT(id_mesa) ASC LIMIT 1";
+
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');  
     }
 
     static public function ConsultarPedidoEntregados($idPedido)

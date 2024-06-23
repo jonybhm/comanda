@@ -51,7 +51,19 @@ class EncuestaManejador
             
             if($pedido)
             {
-                $payload = json_encode($pedido);
+
+                $diferencia = CalcularDiferenciaTiempoEnMinutos($pedido->tiempo_inicial,(int)$pedido->tiempo_final);
+                
+                if($diferencia <= 0)
+                {
+                    $mensaje = "pedido retrasado";
+                }
+                else
+                {
+                    $mensaje = "tiempo restante: ".$diferencia." minutos";
+                }
+                
+                $payload = json_encode(array("pedido"=>$pedido,"mensaje"=>$mensaje));
             }
             else
             {

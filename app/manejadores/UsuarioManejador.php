@@ -93,7 +93,6 @@ class UsuarioManejador implements IManejadores
         $id = (int)$args['id'];
         
         $parametros = $request->getParsedBody();    
-        var_dump($parametros);
 
         if (!$parametros) 
         {
@@ -131,16 +130,26 @@ class UsuarioManejador implements IManejadores
 
     public function Baja($request,$response, $args)
     {
-        $id = (int)$args['id'];
-        
-        if(empty($id))
+        $parametros = $request->getParsedBody();    
+
+        if (!$parametros) 
+        {
+            $payload = json_encode(array("mensaje" => "No se recibieron los datos correctamente."));
+            $response->getBody()->write($payload);
+            return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
+        }
+
+        $id = $parametros['id'];
+        $estadoNuevo = $parametros['estadoNuevo'];
+
+        if(empty($id) || empty($estadoNuevo))
         {
             $payload = json_encode(array("mensaje" => "Error al buscar usuario, campo id vacio."));
         }
         else
         {
-            Usuario::BorrarUsuario($id);
-            $payload = json_encode(array("mensaje" => "El usuario se ha borrado con exito"));
+            Usuario::BorradoOSuspencionUsuario($estadoNuevo,$id);
+            $payload = json_encode(array("mensaje" => "El usuario se ha ".$estadoNuevo." con exito"));
 
         }
 

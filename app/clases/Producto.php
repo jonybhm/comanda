@@ -74,6 +74,16 @@ class Producto
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
 
+    static public function ConsultarProductosDelMenosVendidoAlMas()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT  productos.nombre_producto, COUNT(productos_pedidos.id_producto) AS cantidad FROM productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto=productos.id GROUP BY productos.nombre_producto ORDER BY cantidad ASC";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Producto');
+    }
+
 
 
     static public function ModificarProducto($nombre,$precio,$tipo,$id)

@@ -57,20 +57,34 @@ class Encuesta
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT tiempo_final FROM pedidos WHERE id = ? AND id_mesa = ?";
+        $query = "SELECT tiempo_final,tiempo_inicial FROM pedidos WHERE id = ? AND id_mesa = ?";
 
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $idPedido, PDO::PARAM_STR);
         $consulta -> bindValue(2, $idMesa, PDO::PARAM_STR);
         $consulta -> execute();
 
-        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');
+        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Pedido');
+        $elemento = $consulta -> fetch();
+        return $elemento;
     }
 
     static public function ConsultarTopCincoEncuestas()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT * FROM encuesta ORDER BY puntaje_restaurante DESC LIMIT 5";
+        $query = "SELECT * FROM encuesta ORDER BY puntaje_mesa DESC LIMIT 5";
+        
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Encuesta');
+        
+    }
+
+    static public function ConsultarBottomCincoEncuestas()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT * FROM encuesta ORDER BY puntaje_mesa ASC LIMIT 5";
         
         $consulta = $pdo->prepare($query);
         $consulta -> execute();

@@ -49,7 +49,7 @@ $app->group('/usuarios',function(RouteCollectorProxy $group)
     $group->get('/{id}', \UsuarioManejador::class . ':ObtenerUno');
     $group->get('[/]', \UsuarioManejador::class . ':ObtenerTodos');
     $group->put('/{id}', \UsuarioManejador::class . ':Modificar');
-    $group->delete('/{id}', \UsuarioManejador::class . ':Baja');
+    $group->put('[/]', \UsuarioManejador::class . ':Baja');
 })->add(new AuthMiddleware(["socio"])); 
 
 #---------------------------PRODUCTOS---------------------------
@@ -159,15 +159,24 @@ $app->group('/producto', function (RouteCollectorProxy $group) {
 #---------------------------ESTADISTICAS---------------------------
 
 $app->group('/estadistica', function (RouteCollectorProxy $group) {
-    $group->get('/mejoresComentarios', \EstadisticaManejador::class . ':ObtenerMejoresEncuestas');
     $group->get('/mesaMasUsada', \EstadisticaManejador::class . ':ObtenerMesaMasUsada');
-    $group->get('/pedidosTardios', \EstadisticaManejador::class . ':ObtenerPedidoEntregadosFueraDeTiempo');
-    $group->get('/mesasTop', \EstadisticaManejador::class . ':ObtenerMesasPorOrdenDeFacturacion');
+    $group->get('/mesaMenosUsada', \EstadisticaManejador::class . ':ObtenerMesaMenosUsada');
+    $group->get('/mesasMayorFacturacion', \EstadisticaManejador::class . ':ObtenerMesasMayorFacturacion');
+    $group->get('/mesasMenorFacturacion', \EstadisticaManejador::class . ':ObtenerMesasMenorFacturacion');
+    $group->get('/mesaMayorImporte', \EstadisticaManejador::class . ':ObtenerMesaMayorImporte');
+    $group->get('/mesaMenorImporte', \EstadisticaManejador::class . ':ObtenerMesaMenorImporte');
     $group->get('/mesasEntreFechas', \EstadisticaManejador::class . ':ObtenerMesasEntreFechas');
+    $group->get('/mejoresComentarios', \EstadisticaManejador::class . ':ObtenerMejoresEncuestas');
+    $group->get('/peoresComentarios', \EstadisticaManejador::class . ':ObtenerPeoresEncuestas');
     $group->get('/productosTop', \EstadisticaManejador::class . ':ObtenerPedidoVendidosDescendente');
+    $group->get('/productosBottom', \EstadisticaManejador::class . ':ObtenerPedidoVendidosAscendente');
+    $group->get('/pedidosTardios', \EstadisticaManejador::class . ':ObtenerPedidoEntregadosFueraDeTiempo');
+    $group->get('/pedidosCancelados', \EstadisticaManejador::class . ':ObtenerPedidosCancelados');
     $group->get('/logeos/{nombreUsuario}', \EstadisticaManejador::class . ':ObtenerLogeoUsuarioEspecifico');
+    $group->get('/todosUsuarios/{tipoEmpleado}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarioPorSector');
     $group->get('/{tipoEmpleado}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarios');
     $group->get('/{tipoEmpleado}/{nombreUsuario}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarioEspecifico');
+
 
 })->add(new AuthMiddleware(["socio"]));
 

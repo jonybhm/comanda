@@ -58,11 +58,41 @@ class Mesa
         $consulta -> execute();
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
     }
+
+    static public function ConsultarMesaMayorImporte()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT mesas.id, pedidos.precio_total AS importe FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa ORDER BY importe DESC LIMIT 1";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
+    }
     
-    static public function ConsultarMesasPorOrdenDeFacturacion()
+    static public function ConsultarMesaMenorImporte()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT mesas.id, pedidos.precio_total AS importe FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa ORDER BY importe ASC LIMIT 1";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
+    }
+
+    static public function ConsultarMesasPorOrdenDeFacturacionDescendente()
     {
         $pdo = AccederABaseDeDatos('comanda');
         $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa GROUP BY mesas.id ORDER BY facturado DESC";
+
+        $consulta = $pdo->prepare($query);
+        $consulta -> execute();
+        return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
+    }
+
+    static public function ConsultarMesasPorOrdenDeFacturacionAscendente()
+    {
+        $pdo = AccederABaseDeDatos('comanda');
+        $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa GROUP BY mesas.id ORDER BY facturado ASC";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();

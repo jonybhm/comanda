@@ -29,12 +29,58 @@ class EstadisticaManejador
     
     }
 
+    public function ObtenerPeoresEncuestas($request,$response, $args)
+    {
+    
+        $usuario = Encuesta::ConsultarBottomCincoEncuestas();
+        
+        if($usuario)
+        {
+            $payload = json_encode($usuario);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "Encuestas no encontradas."));
+        }
+    
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    
+    }
+
     public function ObtenerMesaMasUsada($request,$response, $args)
     {
     
         $pedidoMesa = Pedido::ConsultarPedidoMesaMasUsada();
 
-        $mesa = Mesa::ConsultarMesa($pedidoMesa->id_mesa);
+        $mesa = Mesa::ConsultarMesa($pedidoMesa[0]->id_mesa);
+        
+        if($mesa)
+        {
+            $payload = json_encode($mesa);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "Mesa no encontrada."));
+        }
+    
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    
+    }
+
+    public function ObtenerMesaMenosUsada($request,$response, $args)
+    {
+    
+        $pedidoMesa = Pedido::ConsultarPedidoMesaMenosUsada();
+
+        $mesa = Mesa::ConsultarMesa($pedidoMesa[0]->id_mesa);
         
         if($mesa)
         {
@@ -73,8 +119,27 @@ class EstadisticaManejador
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json');    
-    
 
+    }
+
+    public function ObtenerPedidosCancelados($request,$response, $args)
+    {
+    
+        $pedidos = Pedido::ConsultarCancelados();
+        
+        if($pedidos)    
+        {
+            $payload = json_encode($pedidos);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "No hay pedidos cancelados."));
+        }
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
 
     }
 
@@ -123,7 +188,7 @@ class EstadisticaManejador
         else
         {
             
-            $usuario = Usuario::ConsultarCantidadOPeracionesUsuarioSectoryNombre($tipoEmpleado,$nombreUsuario);
+            $usuario = Usuario::ConsultarCantidadOPeracionesUsuarioNombre($tipoEmpleado,$nombreUsuario);
             
             if($usuario)
             {
@@ -138,11 +203,39 @@ class EstadisticaManejador
 
         $response->getBody()->write($payload);
         
-        return $response->withHeader('Content-Type', 'application/json');        
-
-        
+        return $response->withHeader('Content-Type', 'application/json');               
     }
     
+
+    public function ObtenerOperacionesUsuarioPorSector($request,$response, $args)
+    {     
+        $tipoEmpleado = (string)$args['tipoEmpleado'];
+
+        if(empty($tipoEmpleado))
+        {
+            $payload = json_encode(array("mensaje" => "Error al buscar usuario, campo tipoEmpleado vacio."));
+        }
+        else
+        {
+            
+            $usuario = Usuario::ConsultarCantidadOPeracionesUsuarioSectoryNombre($tipoEmpleado);
+            
+            if($usuario)
+            {
+                $payload = json_encode($usuario);
+            }
+            else
+            {
+                $payload = json_encode(array("mensaje" => "Usuario no encontrado."));
+            }
+        }
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');               
+    }
+
     public function ObtenerLogeoUsuarioEspecifico($request,$response, $args)
     {
         $nombreUsuario = (string)$args['nombreUsuario'];
@@ -194,15 +287,35 @@ class EstadisticaManejador
         $response->getBody()->write($payload);
         
         return $response->withHeader('Content-Type', 'application/json');    
-    
-
-
     }
-
-    public function ObtenerMesasPorOrdenDeFacturacion($request,$response, $args)
+    
+    public function ObtenerPedidoVendidosAscendente($request,$response, $args)
     {
     
-        $mesas = Mesa::ConsultarMesasPorOrdenDeFacturacion();
+        $pedidos = Producto::ConsultarProductosDelMenosVendidoAlMas();
+
+        
+        if($pedidos)    
+        {
+            $payload = json_encode($pedidos);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "No hay pedidos."));
+        }
+    
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    
+    }
+
+    public function ObtenerMesaMayorImporte($request,$response, $args)
+    {
+    
+        $mesas = Mesa::ConsultarMesaMayorImporte();
 
         
         if($mesas)    
@@ -220,9 +333,78 @@ class EstadisticaManejador
         
         return $response->withHeader('Content-Type', 'application/json');    
     
-
-
     }
+
+    public function ObtenerMesaMenorImporte($request,$response, $args)
+    {
+    
+        $mesas = Mesa::ConsultarMesaMenorImporte();
+
+        
+        if($mesas)    
+        {
+            $payload = json_encode($mesas);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "No hay mesas."));
+        }
+    
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    
+    }
+
+
+    public function ObtenerMesasMayorFacturacion($request,$response, $args)
+    {
+    
+        $mesas = Mesa::ConsultarMesasPorOrdenDeFacturacionDescendente();
+
+        
+        if($mesas)    
+        {
+            $payload = json_encode($mesas);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "No hay mesas."));
+        }
+    
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    
+    }
+
+    public function ObtenerMesasMenorFacturacion($request,$response, $args)
+    {
+    
+        $mesas = Mesa::ConsultarMesasPorOrdenDeFacturacionAscendente();
+
+        
+        if($mesas)    
+        {
+            $payload = json_encode($mesas);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "No hay mesas."));
+        }
+    
+
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    
+    }
+
 
     public function ObtenerMesasEntreFechas($request,$response, $args)
     {
