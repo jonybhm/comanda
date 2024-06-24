@@ -49,10 +49,10 @@ class EncuestaManejador
         {
             $pedido = Encuesta::ConsultarTiempoPedido($idMesa,$idPedido);
             
-            if($pedido)
+            if($pedido && $pedido->estado != "entregado")
             {
 
-                $diferencia = CalcularDiferenciaTiempoEnMinutos($pedido->tiempo_inicial,(int)$pedido->tiempo_final);
+                $diferencia = CalcularDiferenciaTiempoEnMinutos($pedido->registrado,(int)$pedido->estimado);
                 
                 if($diferencia <= 0)
                 {
@@ -65,9 +65,14 @@ class EncuestaManejador
                 
                 $payload = json_encode(array("pedido"=>$pedido,"mensaje"=>$mensaje));
             }
+            else if( $pedido->estado == "entregado")
+            {
+                $payload = json_encode(array("pedido"=>$pedido,"mensaje" => "Pedido entregado."));
+            }
             else
             {
                 $payload = json_encode(array("mensaje" => "Pedido no encontrado."));
+
             }
         }
 

@@ -48,7 +48,7 @@ $app->group('/usuarios',function(RouteCollectorProxy $group)
     $group->post('[/]', \UsuarioManejador::class . ':Alta');
     $group->get('/{id}', \UsuarioManejador::class . ':ObtenerUno');
     $group->get('[/]', \UsuarioManejador::class . ':ObtenerTodos');
-    $group->put('/{id}', \UsuarioManejador::class . ':Modificar');
+    $group->put('/modificar/{id}', \UsuarioManejador::class . ':Modificar');
     $group->put('[/]', \UsuarioManejador::class . ':Baja');
 })->add(new AuthMiddleware(["socio"])); 
 
@@ -111,7 +111,11 @@ $app->group('/reciboPedidos',function(RouteCollectorProxy $group)
 
 $app->group('/entregaPedidos',function(RouteCollectorProxy $group)
 {
-    $group->get('[/]', \PedidoProductoManejador::class . ':RecibirPedidosListosParaEntregar');
+    $group->get('/mesas', \MesaManejador::class . ':ObtenerTodos');
+    $group->get('/pendientes', \PedidoProductoManejador::class . ':RecibirPedidosPendientesMozo');
+    $group->get('/preparacion', \PedidoProductoManejador::class . ':RecibirPedidosEnPreparacion');
+    $group->get('/listos', \PedidoProductoManejador::class . ':RecibirPedidosListosParaEntregar');
+    $group->get('/entregados', \PedidoProductoManejador::class . ':RecibirPedidosEntregados');
     $group->put('/{idPedidoProducto}', \PedidoProductoManejador::class . ':ServirPedido');
 })->add(new AuthMiddleware(["mozo"]));
 
@@ -132,9 +136,10 @@ $app->group('/cobroPedidos',function(RouteCollectorProxy $group)
 
 #---------------------------CIERRE DE MESA---------------------------
 
-$app->group('/cierrePedidos',function(RouteCollectorProxy $group)
-{
-    $group->put('/{id}', \PedidoProductoManejador::class . ':CerrarMesa');
+$app->group('/cierreMesas',function(RouteCollectorProxy $group)
+{    
+    $group->get('/mesas', \MesaManejador::class . ':ObtenerTodos');
+    $group->put('/{idMesa}', \PedidoProductoManejador::class . ':CerrarMesa');
 })->add(new AuthMiddleware(["socio"]));
 
 
@@ -150,7 +155,7 @@ $app->group('/login',function(RouteCollectorProxy $group)
 #---------------------------ARCHIVOS---------------------------
 
 
-$app->group('/producto', function (RouteCollectorProxy $group) {
+$app->group('/listados', function (RouteCollectorProxy $group) {
     $group->post('/importar', \ArchivoManejador::class . ':Importar');
     $group->get('/exportar', \ArchivoManejador::class . ':Exportar');
   })->add(new AuthMiddleware(["socio"]));

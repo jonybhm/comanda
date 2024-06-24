@@ -96,7 +96,7 @@ class Usuario
     static public function ConsultarCantidadOPeracionesUsuarioSector($tipoEmpleado)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT usuarios.tipo_empleado, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? GROUP BY usuarios.tipo_empleado DESC ";
+        $query = "SELECT usuarios.tipo_empleado, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY usuarios.tipo_empleado DESC ";
         
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $tipoEmpleado, PDO::PARAM_INT);
@@ -107,7 +107,7 @@ class Usuario
     static public function ConsultarCantidadOPeracionesUsuarioNombre($tipoEmpleado,$nombreUsuario)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT usuarios.nombre_usuario, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? AND usuarios.nombre_usuario=? GROUP BY usuarios.tipo_empleado ORDER BY cantidad_operaciones DESC ";
+        $query = "SELECT usuarios.nombre_usuario, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? AND usuarios.nombre_usuario=? AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY usuarios.tipo_empleado ORDER BY cantidad_operaciones DESC ";
         
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $tipoEmpleado, PDO::PARAM_INT);
@@ -119,7 +119,7 @@ class Usuario
     static public function ConsultarCantidadOPeracionesUsuarioSectoryNombre($tipoEmpleado)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT usuarios.nombre_usuario, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? GROUP BY usuarios.nombre_usuario ORDER BY cantidad_operaciones DESC ";
+        $query = "SELECT usuarios.nombre_usuario, COUNT(log_usuarios.id_usuario) AS cantidad_operaciones FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.tipo_empleado = ? AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY usuarios.nombre_usuario ORDER BY cantidad_operaciones DESC ";
         
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $tipoEmpleado, PDO::PARAM_INT);
@@ -130,7 +130,7 @@ class Usuario
     static public function ConsultarLogeoUsuario($nombreUsuario)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT usuarios.nombre_usuario, log_usuarios.accion_tomada, COUNT(log_usuarios.id_usuario) AS cantidad FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.nombre_usuario=? AND accion_tomada LIKE '%sesion%' ";
+        $query = "SELECT usuarios.nombre_usuario, log_usuarios.accion_tomada, COUNT(log_usuarios.id_usuario) AS cantidad FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.nombre_usuario=? AND accion_tomada LIKE '%sesion%' AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) ";
         
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_INT);

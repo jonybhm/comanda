@@ -11,8 +11,10 @@ class PedidoProducto
     private $_nombreCliente;
     private $_estadoProducto;
     private $_tiempoEstimado;
+    private $_fecha;
+    
 
-    public function __construct($id = NULL, $idPedido = NULL, $idProducto = NULL, $nombreCliente = NULL, $pestadoroducto = NULL, $tiempoEstimado = NULL)
+    public function __construct($id = NULL, $idPedido = NULL, $idProducto = NULL, $nombreCliente = NULL, $pestadoroducto = NULL, $tiempoEstimado = NULL, $fecha = NULL)
     {
         $this->_id = $id;
         $this->_idPedido = $idPedido;
@@ -20,6 +22,7 @@ class PedidoProducto
         $this->_nombreCliente = $nombreCliente;
         $this->_estadoProducto = $pestadoroducto;
         $this->_tiempoEstimado = $tiempoEstimado;        
+        $this->_fecha = $fecha;        
 
     }
     
@@ -175,7 +178,7 @@ class PedidoProducto
     static public function EliminarPedidoLuegoDeCobrar($idMesa)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "DELETE FROM productos_pedidos WHERE id_mesa = ?";
+        $query = "DELETE FROM productos_pedidos WHERE id_pedido = ?";
         try
         {
             $consulta = $pdo->prepare($query);

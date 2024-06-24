@@ -18,9 +18,9 @@ class UsuarioManejador implements IManejadores
             $response->getBody()->write($payload);
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
-        $usuario = $parametros['usuarioEmpleado'];
-        $contrasena = $parametros['contrasenaEmpleado'];
-        $tipo = $parametros['tipoEmpleado'];
+        $usuario = $parametros['usuario'];
+        $contrasena = $parametros['contraseña'];
+        $tipo = $parametros['sector'];
     
         if(empty($usuario) || empty($contrasena))
         {
@@ -101,9 +101,9 @@ class UsuarioManejador implements IManejadores
             return $response->withHeader('Content-Type', 'application/json')->withStatus(400);
         }
 
-        $usuario = $parametros['usuarioEmpleado'];
-        $contrasena = $parametros['contrasenaEmpleado'];
-        $tipo = $parametros['tipoEmpleado'];
+        $usuario = $parametros['usuario'];
+        $contrasena = $parametros['contraseña'];
+        $tipo = $parametros['sector'];
         
         if(empty($id))
         {

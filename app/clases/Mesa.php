@@ -62,7 +62,7 @@ class Mesa
     static public function ConsultarMesaMayorImporte()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT mesas.id, pedidos.precio_total AS importe FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa ORDER BY importe DESC LIMIT 1";
+        $query = "SELECT mesas.id, pedidos.precio_total AS importe FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) ORDER BY importe DESC LIMIT 1";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();
@@ -72,7 +72,7 @@ class Mesa
     static public function ConsultarMesaMenorImporte()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT mesas.id, pedidos.precio_total AS importe FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa ORDER BY importe ASC LIMIT 1";
+        $query = "SELECT mesas.id, pedidos.precio_total AS importe FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) ORDER BY importe ASC LIMIT 1";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();
@@ -82,7 +82,7 @@ class Mesa
     static public function ConsultarMesasPorOrdenDeFacturacionDescendente()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa GROUP BY mesas.id ORDER BY facturado DESC";
+        $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY mesas.id ORDER BY facturado DESC";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();
@@ -92,7 +92,7 @@ class Mesa
     static public function ConsultarMesasPorOrdenDeFacturacionAscendente()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa GROUP BY mesas.id ORDER BY facturado ASC";
+        $query = "SELECT mesas.id, SUM(pedidos.precio_total) AS facturado FROM mesas INNER JOIN pedidos ON mesas.id = pedidos.id_mesa WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY mesas.id ORDER BY facturado ASC";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();

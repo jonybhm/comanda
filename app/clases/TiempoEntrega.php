@@ -6,17 +6,21 @@ class TiempoEspera
     private $_tiempoInicial;
     private $_tiempoFinal;
     private $_entregaEstimada;
-    private $_entrega_real;
+    private $_entregaReal;
     private $_entregaTardia;
+    private $_idPedido;
+    private $_fecha;
 
-    public function __construct($id = NULL, $tiempoInicial = NULL, $tiempoFinal = NULL, $entregaEstimada = NULL, $entrega_real = NULL, $entregaTardia = NULL)
+    public function __construct($id = NULL, $tiempoInicial = NULL, $tiempoFinal = NULL, $entregaEstimada = NULL, $entregaReal = NULL, $entregaTardia = NULL, $idPedido = NULL, $fecha = NULL)
     {
         $this->_tiempoInicial = $tiempoInicial;
         $this->_tiempoFinal = $tiempoFinal;
         $this->_id = $id;        
         $this->_entregaEstimada = $entregaEstimada;        
-        $this->_entrega_real = $entrega_real;
+        $this->_entregaReal = $entregaReal;
         $this->_entregaTardia = $entregaTardia;
+        $this->_idPedido = $idPedido;
+        $this->_fecha = $fecha;
     }
     
     //ESTE SE USA CUANDO CAMBIA EL ESTADO A "EN PREPARACION"
@@ -81,7 +85,7 @@ class TiempoEspera
     static public function ConsultarTiempoEsperaTardios()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT id_pedido FROM pedidos_tiempo WHERE entrega_tardia = 1 GROUP BY id_pedido DESC";
+        $query = "SELECT id_pedido FROM pedidos_tiempo WHERE entrega_tardia = 1 AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY id_pedido DESC";
         
         $consulta = $pdo->prepare($query);
         $consulta -> execute();

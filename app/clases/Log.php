@@ -6,14 +6,16 @@ class LogUsuario
     private $_id;
     private $_idUsuario;
     private $_accionTomada;
-    private $_fechaHora;
+    private $_fecha;
+    private $_hora;
 
-    public function __construct($id = NULL, $idUsuario = NULL, $accionTomada = NULL, $fechaHora = NULL)
+    public function __construct($id = NULL, $idUsuario = NULL, $accionTomada = NULL, $fecha = NULL, $hora = NULL)
     {
         $this->_idUsuario = $idUsuario;
         $this->_accionTomada = $accionTomada;
         $this->_id = $id;        
-        $this->_fechaHora = $fechaHora;        
+        $this->_fecha = $fecha;        
+        $this->_hora = $hora;        
 
     }
     

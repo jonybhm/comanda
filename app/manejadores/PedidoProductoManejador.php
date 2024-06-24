@@ -243,6 +243,75 @@ class PedidoProductoManejador
     
     }
 
+     #---------------------------PEDIDOS PENDIENTES MOZOS---------------------------
+
+    public function RecibirPedidosPendientesMozo($request,$response, $args)
+    {
+
+        $arrayTipoPedidos = ["comida","bebida","cerveza"];
+        $arrayMensaje = array();
+
+        foreach($arrayTipoPedidos as $tipo)
+        {
+            
+            $pedido = Pedido::ConsultarPedidoPorEstado("pendiente",$tipo);
+            
+            if($pedido)
+            {            
+                array_push($arrayMensaje,$pedido);
+            }  
+            else
+            {
+                array_push($arrayMensaje, "No hay pedidos del tipo ".$tipo." que estén pendientes");
+            }
+        }
+        
+        $payload = json_encode($arrayMensaje);
+        
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos pendientes" );
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    }
+
+
+    #---------------------------PEDIDOS EN PREPARACION---------------------------
+
+    public function RecibirPedidosEnPreparacion($request,$response, $args)
+    {
+
+        $arrayTipoPedidos = ["comida","bebida","cerveza"];
+        $arrayMensaje = array();
+
+        foreach($arrayTipoPedidos as $tipo)
+        {
+            
+            $pedido = Pedido::ConsultarPedidoPorEstado("en preparacion",$tipo);
+            
+            if($pedido)
+            {            
+                array_push($arrayMensaje,$pedido);
+            }  
+            else
+            {
+                array_push($arrayMensaje, "No hay pedidos del tipo ".$tipo." que estén en preparacion");
+            }
+        }
+        
+        $payload = json_encode($arrayMensaje);
+        
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos en preparacion" );
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    }
+
     #---------------------------PEDIDOS LISTOS PARA ENTREGAR---------------------------
 
     public function RecibirPedidosListosParaEntregar($request,$response, $args)
@@ -277,6 +346,40 @@ class PedidoProductoManejador
         return $response->withHeader('Content-Type', 'application/json');    
     }
 
+    #---------------------------PEDIDOS ENTREGADOS---------------------------
+
+    public function RecibirPedidosEntregados($request,$response, $args)
+    {
+
+        $arrayTipoPedidos = ["comida","bebida","cerveza"];
+        $arrayMensaje = array();
+
+        foreach($arrayTipoPedidos as $tipo)
+        {
+            
+            $pedido = Pedido::ConsultarPedidoPorEstado("entregado",$tipo);
+            
+            if($pedido)
+            {            
+                array_push($arrayMensaje,$pedido);
+            }  
+            else
+            {
+                array_push($arrayMensaje, "No hay pedidos del tipo ".$tipo." que estén entregados");
+            }
+        }
+        
+        $payload = json_encode($arrayMensaje);
+        
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos entregados" );
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    }
+
     #---------------------------LLEVAR PEDIDOS A MESAS---------------------------
 
     public function ServirPedido($request,$response, $args)
@@ -292,8 +395,6 @@ class PedidoProductoManejador
         else
         {
         
-            Mesa::ModificarMesa("con cliente comiendo",$idPedidoProducto);
-
             PedidoProducto::ModificarProductoPedido("entregado",0,$idPedidoProducto);
             $payload = json_encode(array("mensaje" => "pedido ".$idPedidoProducto." entregado con exito"));
             
@@ -304,14 +405,23 @@ class PedidoProductoManejador
         $logId = LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."entrega pedidos en mesa" );  
 
         #Verificar que todos los elementos del pedido esten entregados
-        $pedido = Pedido::ConsultarIdPedidoPorIdProductoPedido($idPedidoProducto);        
+        $pedido = Pedido::ConsultarIdPedidoPorIdProductoPedido($idPedidoProducto);  
         $estadoFinal = PedidoProductoManejador::VerificarEstadoPedido($pedido->id_pedido);
         Pedido::ModificarEstadoPedido($estadoFinal,$pedido->id_pedido);
 
         //MODIFICAR TIEMPOESPERA
-        $HoraPedidoEnPreparacion = LogUsuario::ObtenerLog($logId)->fecha_hora;
+        $HoraPedidoEnPreparacion = date("H:i:s");
+
         TiempoEspera::ModificarTiempoEsperaFinal($HoraPedidoEnPreparacion,$idPedidoProducto);
         TiempoEspera::ModificarTiempoEsperaAtrasado();
+
+        //CAMBIAR ESTADO MESA
+        if($estadoFinal == "entregado")
+        {
+            $idMesa = Pedido::ConsultarIdMesaPorIdPedido($pedido->id_pedido);
+            //var_dump($idMesa);
+            Mesa::ModificarMesa("con cliente comiendo",$idMesa->id_mesa);
+        }      
 
         $response->getBody()->write($payload);
 
@@ -359,16 +469,14 @@ class PedidoProductoManejador
     {
         $idPedido = $args['idPedido'];
         
-        $estado = "con cliente pagando";
-        
         if(empty($idPedido))
         {
             $payload = json_encode(array("mensaje" => "Error al buscar mesa, campo id vacio."));
         }
         else
         {
-            $idMesa = Pedido::ConsultarIdMesaPorIdPedido($idPedido);
-            Mesa::ModificarMesa($estado,$idMesa);
+            $pedidoMesa = Pedido::ConsultarIdMesaPorIdPedido($idPedido);
+            Mesa::ModificarMesa("con cliente pagando",$pedidoMesa->id_mesa);
             $payload = json_encode(array("mensaje" => "Cobrando Mesa"));            
         }
 
@@ -376,7 +484,7 @@ class PedidoProductoManejador
         
         if($pagoExitoso)
         {
-            echo PHP_EOL."pago exitoso";
+            Pedido::ModificarEstadoPedido("cobrado",$idPedido);
             PedidoProducto::EliminarPedidoLuegoDeCobrar($idPedido);
         }
 
@@ -395,16 +503,14 @@ class PedidoProductoManejador
     public function CerrarMesa($request,$response, $args)
     {
         $idMesa = $args['idMesa'];
-        $estado = "cerrada";
-        
-        
+   
         if(empty($idMesa))
         {
             $payload = json_encode(array("mensaje" => "Error al buscar mesa, campo id vacio."));
         }
         else
         {
-            Mesa::ModificarMesa($estado,$idMesa);
+            Mesa::ModificarMesa("cerrada",$idMesa);
             $payload = json_encode(array("mensaje" => "Mesa cerrada"));            
         }
       

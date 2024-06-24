@@ -57,7 +57,7 @@ class Encuesta
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT tiempo_final,tiempo_inicial FROM pedidos WHERE id = ? AND id_mesa = ?";
+        $query = "SELECT tiempo_inicial AS registrado ,tiempo_final AS estimado,  estado FROM pedidos WHERE id = ? AND id_mesa = ?";
 
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $idPedido, PDO::PARAM_STR);
@@ -72,7 +72,7 @@ class Encuesta
     static public function ConsultarTopCincoEncuestas()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT * FROM encuesta ORDER BY puntaje_mesa DESC LIMIT 5";
+        $query = "SELECT * FROM encuesta WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) ORDER BY puntaje_mesa DESC LIMIT 5";
         
         $consulta = $pdo->prepare($query);
         $consulta -> execute();
@@ -84,7 +84,7 @@ class Encuesta
     static public function ConsultarBottomCincoEncuestas()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT * FROM encuesta ORDER BY puntaje_mesa ASC LIMIT 5";
+        $query = "SELECT * FROM encuesta WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) ORDER BY puntaje_mesa ASC LIMIT 5";
         
         $consulta = $pdo->prepare($query);
         $consulta -> execute();

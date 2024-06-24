@@ -67,7 +67,7 @@ class Producto
     static public function ConsultarProductosDelMasVendidoAlMenos()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT  productos.nombre_producto, COUNT(productos_pedidos.id_producto) AS cantidad FROM productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto=productos.id GROUP BY productos.nombre_producto ORDER BY cantidad DESC";
+        $query = "SELECT  productos.nombre_producto, COUNT(productos_pedidos.id_producto) AS cantidad FROM productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto=productos.id WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY productos.nombre_producto ORDER BY cantidad DESC";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();
@@ -77,7 +77,7 @@ class Producto
     static public function ConsultarProductosDelMenosVendidoAlMas()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT  productos.nombre_producto, COUNT(productos_pedidos.id_producto) AS cantidad FROM productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto=productos.id GROUP BY productos.nombre_producto ORDER BY cantidad ASC";
+        $query = "SELECT  productos.nombre_producto, COUNT(productos_pedidos.id_producto) AS cantidad FROM productos_pedidos INNER JOIN productos ON productos_pedidos.id_producto=productos.id WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY productos.nombre_producto ORDER BY cantidad ASC";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();

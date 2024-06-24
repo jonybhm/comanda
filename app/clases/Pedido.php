@@ -100,7 +100,7 @@ class Pedido
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT pedidos.id_mesa FROM pedidos INNER JOIN productos_pedidos ON productos_pedidos.id_pedidos = pedidos.id WHERE pedidos.id = ? ";
+        $query = "SELECT pedidos.id_mesa FROM pedidos INNER JOIN productos_pedidos ON productos_pedidos.id_pedido = pedidos.id WHERE pedidos.id = ? ";
 
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $idPedido, PDO::PARAM_INT);
@@ -124,7 +124,7 @@ class Pedido
     static public function ConsultarCancelados()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT id FROM pedidos WHERE estado = 'cancelado'";
+        $query = "SELECT id FROM pedidos WHERE estado = 'cancelado' AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY)";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();
@@ -222,7 +222,7 @@ class Pedido
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT *, COUNT(id_mesa) FROM pedidos GROUP BY id_mesa ORDER BY COUNT(id_mesa) DESC LIMIT 1";
+        $query = "SELECT *, COUNT(id_mesa) FROM pedidos WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY id_mesa ORDER BY COUNT(id_mesa) DESC LIMIT 1";
 
 
         $consulta = $pdo->prepare($query);
@@ -235,7 +235,7 @@ class Pedido
     {
 
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT *, COUNT(id_mesa) FROM pedidos GROUP BY id_mesa ORDER BY COUNT(id_mesa) ASC LIMIT 1";
+        $query = "SELECT *, COUNT(id_mesa) FROM pedidos WHERE fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) GROUP BY id_mesa ORDER BY COUNT(id_mesa) ASC LIMIT 1";
 
 
         $consulta = $pdo->prepare($query);
