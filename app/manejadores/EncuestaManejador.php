@@ -54,9 +54,9 @@ class EncuestaManejador
 
                 $diferencia = CalcularDiferenciaTiempoEnMinutos($pedido->registrado,(int)$pedido->estimado);
                 
-                if($diferencia <= 0)
+                if($diferencia < 0)
                 {
-                    $mensaje = "pedido retrasado";
+                    $mensaje = "pedido retrasado. Tiempo extra: ". $diferencia;
                 }
                 else
                 {

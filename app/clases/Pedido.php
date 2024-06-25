@@ -13,8 +13,9 @@ class Pedido
     private $_precioTotal;
     private $_foto;
     private $_fecha;    
+    private $_tiempoInicial;    
 
-    public function __construct($id = NULL, $idMesa = NULL, $nombreCliente = NULL, $estadoPedido = NULL, $tiempoPreparacion = NULL, $precioTotal = NULL, $foto = NULL,  $fecha = NULL)
+    public function __construct($id = NULL, $idMesa = NULL, $tiempoInicial = NULL, $nombreCliente = NULL, $estadoPedido = NULL, $tiempoPreparacion = NULL, $precioTotal = NULL, $foto = NULL,  $fecha = NULL)
     {
         $this->_id = $id;
         $this->_idMesa = $idMesa;
@@ -24,6 +25,7 @@ class Pedido
         $this->_precioTotal = $precioTotal;
         $this->_foto = $foto;   
         $this->_fecha = $fecha;        
+        $this->_tiempoInicial = $tiempoInicial;        
     }
     
     public function getId()
@@ -114,7 +116,7 @@ class Pedido
     static public function ConsultarTodosLosPedidos()
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT * FROM pedidos";
+        $query = "SELECT id, id_mesa, nombre_cliente, estado, precio_total, tiempo_final AS tiempo_estimado FROM pedidos";
 
         $consulta = $pdo->prepare($query);
         $consulta -> execute();

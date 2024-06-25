@@ -22,7 +22,11 @@ class ArchivoManejador
                     $productoPrecio = $columnas[2];
                     $productoTipo = $columnas[3];
                     
-                    Producto::AltaProducto($productoNombre,$productoPrecio,$productoTipo);
+                    $productoExistente = Producto::ConsultarProducto($columnas[0]);
+                    if(!$productoExistente)
+                    {
+                        Producto::AltaProducto($productoNombre,$productoPrecio,$productoTipo);
+                    }
                 }
                 $titulosColumnas = false;
             }

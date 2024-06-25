@@ -102,7 +102,8 @@ $app->group('/tomaPedidos',function(RouteCollectorProxy $group)
 
 $app->group('/reciboPedidos',function(RouteCollectorProxy $group)
 {
-    $group->get('[/]', \PedidoProductoManejador::class . ':RecibirPedidosPendientes');
+    $group->get('/pendientes', \PedidoProductoManejador::class . ':RecibirPedidosPendientes');
+    $group->get('/preparacion', \PedidoProductoManejador::class . ':RecibirPedidosEnPreparacionCocina');
     $group->put('/{idPedidoProducto}', \PedidoProductoManejador::class . ':ModificarPedidosPendientes');    
 })->add(new AuthMiddleware(["cocinero","bartender","cervecero"]));
 
@@ -178,8 +179,8 @@ $app->group('/estadistica', function (RouteCollectorProxy $group) {
     $group->get('/pedidosTardios', \EstadisticaManejador::class . ':ObtenerPedidoEntregadosFueraDeTiempo');
     $group->get('/pedidosCancelados', \EstadisticaManejador::class . ':ObtenerPedidosCancelados');
     $group->get('/logeos/{nombreUsuario}', \EstadisticaManejador::class . ':ObtenerLogeoUsuarioEspecifico');
-    $group->get('/todosUsuarios/{tipoEmpleado}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarioPorSector');
     $group->get('/{tipoEmpleado}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarios');
+    $group->get('/todosUsuarios/{tipoEmpleado}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarioPorSector');
     $group->get('/{tipoEmpleado}/{nombreUsuario}', \EstadisticaManejador::class . ':ObtenerOperacionesUsuarioEspecifico');
 
 

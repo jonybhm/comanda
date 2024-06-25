@@ -7,113 +7,1856 @@
 	},
 	"item": [
 		{
-			"name": "http://localhost:1001/usuarios/",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true,
-				"followOriginalHttpMethod": false
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
+			"name": "LOGIN",
+			"item": [
+				{
+					"name": "LOGIN",
+					"event": [
 						{
-							"key": "token",
-							"value": "eyJpYXQiOjE3MTg1OTI1OTIsImV4cCI6MTcxODY1MjU5MiwiYXVkIjoiOTNjMmMzZGYzODVkYWE5OGEwNDdkMDlmNTBiOGU1ZmEzOTk2ODg2MyIsImRhdGEiOnsidXN1YXJpbyI6InBydWViYSIsInBlcmZpbCI6InNvY2lvIn0sImFwcCI6IlRlc3QgSldUIn0",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "usuario",
-							"value": "jonybhm",
-							"type": "text"
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Extraer y almacenar token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.globals.set(\"TOKEN\", jsonData.jwt);",
+									"    console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						},
 						{
-							"key": "contraseña",
-							"value": "14271824",
-							"type": "text"
-						},
-						{
-							"key": "credenciales",
-							"value": "mozo",
-							"type": "text"
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
 						}
-					]
-				},
-				"url": {
-					"raw": "http://localhost:1001/usuarioCSV/exportar",
-					"protocol": "http",
-					"host": [
-						"localhost"
 					],
-					"port": "1001",
-					"path": [
-						"usuarioCSV",
-						"exportar"
-					]
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usuarioEmpleado\":\"socio1\",\r\n    \"contrasenaEmpleado\":\"1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1001/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "http://localhost:1001/listasCSV/importar",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
+			"name": "SOCIOS",
+			"item": [
+				{
+					"name": "ABM",
+					"item": [
 						{
-							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3MTg2NjkwNDgsImV4cCI6MTcxODcyOTA0OCwiYXVkIjoiOTNjMmMzZGYzODVkYWE5OGEwNDdkMDlmNTBiOGU1ZmEzOTk2ODg2MyIsImRhdGEiOnsidXN1YXJpbyI6ImpvbnkyIiwicGVyZmlsIjoic29jaW8ifSwiYXBwIjoiVGVzdCBKV1QifQ.7qWyCg0qwC6dA7kc7LciA0APe7DYIsZpNS5MXJNZLt8",
-							"type": "string"
+							"name": "USUARIOS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"followOriginalHttpMethod": false
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "id",
+											"value": "29",
+											"description": "para borrar o suspender",
+											"type": "text"
+										},
+										{
+											"key": "estadoNuevo",
+											"value": "borrado",
+											"description": "borrado o suspendido",
+											"type": "text"
+										},
+										{
+											"key": "usuario",
+											"value": "mozo2",
+											"description": "para modificar /{id}",
+											"type": "text"
+										},
+										{
+											"key": "sector",
+											"value": "mozo",
+											"description": "para modificar /{id}",
+											"type": "text"
+										},
+										{
+											"key": "contraseña",
+											"value": "1234",
+											"description": "para modificar /{id}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/usuarios",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"usuarios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "MESAS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"followOriginalHttpMethod": false
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "estadoMesa",
+											"value": "cerrada",
+											"description": "para modificar /{id}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/mesas",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"mesas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PEDIDOS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"followOriginalHttpMethod": false
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "estadoPedido",
+											"value": "en preparacion",
+											"description": "para modificar /{id}",
+											"type": "text"
+										},
+										{
+											"key": "tiempoPreparacion",
+											"value": "1",
+											"description": "para modificar /{id}",
+											"type": "text"
+										},
+										{
+											"key": "precioTotal",
+											"value": "1234",
+											"description": "para modificar /{id}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/pedidos",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"pedidos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PRODUCTOS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"followOriginalHttpMethod": false
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "nombreProducto",
+											"value": "pizza",
+											"description": "para modificar /{id}",
+											"type": "text"
+										},
+										{
+											"key": "precioProducto",
+											"value": "150",
+											"description": "para modificar /{id}",
+											"type": "text"
+										},
+										{
+											"key": "tipoProducto",
+											"value": "comida",
+											"description": "para modificar /{id}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/productos",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"productos"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
+				{
+					"name": "ESTADISTICAS",
+					"item": [
 						{
-							"key": "usuarioEmpleado",
-							"value": "jony2",
-							"type": "text"
+							"name": "MESA +USADA",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mesaMasUsada",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mesaMasUsada"
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"key": "contrasenaEmpleado",
-							"value": "14271824",
-							"type": "text"
+							"name": "MESA -USADA",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mesaMenosUsada",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mesaMenosUsada"
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"key": "tipoEmpleado",
-							"value": "socio",
-							"type": "text"
+							"name": "MESA +FACTURAC",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mesasMayorFacturacion",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mesasMayorFacturacion"
+									]
+								}
+							},
+							"response": []
 						},
 						{
-							"key": "archivo",
-							"type": "file",
-							"src": "postman-cloud:///1ef2d08a-5f17-4db0-b462-01ba318f71e5"
+							"name": "MESA -FACTURAC",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mesasMenorFacturacion",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mesasMenorFacturacion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "MESA +IMPORTE",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mesaMayorImporte",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mesaMayorImporte"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "MESA -IMPORTE",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mesaMenorImporte",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mesaMenorImporte"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "MEJORES COM",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mejoresComentarios",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mejoresComentarios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PEORES COM",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "idMesa",
+											"value": "PD8VH",
+											"type": "text"
+										},
+										{
+											"key": "fechaMin",
+											"value": "2024-06-20",
+											"type": "text"
+										},
+										{
+											"key": "fechaMax",
+											"value": "2024-06-21",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/peoresComentarios",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"peoresComentarios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PRODUCTOS +",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/productosTop",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"productosTop"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PRODUCTOS -",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/productosBottom",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"productosBottom"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PEDIDOS TARDIOS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/pedidosTardios",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"pedidosTardios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PEDIDOS CANCELADOS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/pedidosCancelados",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"pedidosCancelados"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ENTRE FECHAS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "idMesa",
+											"value": "IN852",
+											"type": "text"
+										},
+										{
+											"key": "fechaMin",
+											"value": "2024-06-20",
+											"type": "text"
+										},
+										{
+											"key": "fechaMax",
+											"value": "2024-06-26",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mesasEntreFechas",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mesasEntreFechas"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "LOGEOS",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "idMesa",
+											"value": "PD8VH",
+											"type": "text"
+										},
+										{
+											"key": "fechaMin",
+											"value": "2024-06-20",
+											"type": "text"
+										},
+										{
+											"key": "fechaMax",
+											"value": "2024-06-21",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/logeos/mozo1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"logeos",
+										"mozo1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ACCIONES POR SECTOR (AGRUPADO)",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/todosUsuarios/mozo",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"todosUsuarios",
+										"mozo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ACCIONES POR USUARIO",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "idMesa",
+											"value": "PD8VH",
+											"type": "text"
+										},
+										{
+											"key": "fechaMin",
+											"value": "2024-06-20",
+											"type": "text"
+										},
+										{
+											"key": "fechaMax",
+											"value": "2024-06-21",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mozo/mozo1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mozo",
+										"mozo1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "ACCIONES POR SECTOR",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "idMesa",
+											"value": "PD8VH",
+											"type": "text"
+										},
+										{
+											"key": "fechaMin",
+											"value": "2024-06-20",
+											"type": "text"
+										},
+										{
+											"key": "fechaMax",
+											"value": "2024-06-21",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/estadistica/mozo",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"estadistica",
+										"mozo"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
-				"url": {
-					"raw": "http://localhost:1001/listasCSV/importar",
-					"protocol": "http",
-					"host": [
-						"localhost"
+				{
+					"name": "ARCHIVOS",
+					"item": [
+						{
+							"name": "IMPORTAR",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "foto",
+											"type": "file",
+											"src": "postman-cloud:///1ef2fb61-684a-45c0-83f4-29120138ee8d"
+										},
+										{
+											"key": "idMesa",
+											"value": "R9F5W",
+											"type": "text"
+										},
+										{
+											"key": "archivo",
+											"type": "file",
+											"src": "postman-cloud:///1ef332aa-d449-4250-be29-f6cd54ec1bf9"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/listados/importar",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"listados",
+										"importar"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "EXPORTAR",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var token = pm.globals.get(\"TOKEN\");\r",
+											"\r",
+											"pm.request.headers.add({\r",
+											"    key: \"Authorization\",\r",
+											"    value: \"Bearer \" + token\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "foto",
+											"type": "file",
+											"src": "postman-cloud:///1ef2fb61-684a-45c0-83f4-29120138ee8d"
+										},
+										{
+											"key": "idMesa",
+											"value": "R9F5W",
+											"type": "text"
+										},
+										{
+											"key": "archivo",
+											"type": "file",
+											"src": "postman-cloud:///1ef325af-cbdd-4740-9a0c-e0b0341a52e2"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:1001/listados/Exportar",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "1001",
+									"path": [
+										"listados",
+										"Exportar"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CIERRE MESA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
 					],
-					"port": "1001",
-					"path": [
-						"listasCSV",
-						"importar"
-					]
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"url": {
+							"raw": "http://localhost:1001/cierreMesas/IN852",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"cierreMesas",
+								"IN852"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
+		},
+		{
+			"name": "MOZO",
+			"item": [
+				{
+					"name": "TOMAR PEDIDO",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idMesa\":\"D4F96\",\r\n    \"nombreCliente\":\"Jose\",\r\n    \"pedido1\":\r\n    {\r\n        \"idProducto\":5,\r\n        \"cantidad\":1\r\n    },\r\n    \"pedido2\":\r\n    {\r\n        \"idProducto\":6,\r\n        \"cantidad\":2\r\n    },\r\n    \"pedido3\":\r\n    {\r\n        \"idProducto\":7,\r\n        \"cantidad\":1\r\n    },\r\n    \"pedido4\":\r\n    {\r\n        \"idProducto\":8,\r\n        \"cantidad\":1\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1001/tomaPedidos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"tomaPedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TOMAR FOTO",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "foto",
+									"type": "file",
+									"src": "postman-cloud:///1ef329ae-6cb4-4bd0-91f8-78723801db3f"
+								},
+								{
+									"key": "idMesa",
+									"value": "IN852",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:1001/tomaPedidos/tomarFoto",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"tomaPedidos",
+								"tomarFoto"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CANCELAR PEDIDOS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:1001/cancelarPedido/GZ9VG",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"cancelarPedido",
+								"GZ9VG"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ENTREGA PEDIDOS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:1001/entregaPedidos/108",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"entregaPedidos",
+								"108"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "COBRO PEDIDOS",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:1001/cobroPedidos/BFXZD",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"cobroPedidos",
+								"BFXZD"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "COCINA/BAR/CERVECERIA",
+			"item": [
+				{
+					"name": "RECIBO PENDIENTES",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:1001/reciboPedidos/pendientes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"reciboPedidos",
+								"pendientes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RECIBO PREPARACION",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:1001/reciboPedidos/preparacion",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"reciboPedidos",
+								"preparacion"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "MODIFICAR PEDIDO",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"console.log(\"Token almacenado:\", pm.globals.get(\"TOKEN\"));\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "estadoPedidoProducto",
+									"value": "en preparacion",
+									"description": "\"en preparacion\" o \"listo para entregar\"",
+									"type": "text"
+								},
+								{
+									"key": "tiempoEstimado",
+									"value": "3",
+									"description": "tiempo en minutos",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:1001/reciboPedidos/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"reciboPedidos",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CLIENTES",
+			"item": [
+				{
+					"name": "ENCUESTA",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var token = pm.globals.get(\"TOKEN\");\r",
+									"\r",
+									"pm.request.headers.add({\r",
+									"    key: \"Authorization\",\r",
+									"    value: \"Bearer \" + token\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"idMesa\":\"IN852\",\r\n    \"idPedido\":\"BFXZD\",\r\n    \"puntajeMesa\":3,\r\n    \"puntajeMozo\":1,\r\n    \"puntajeCocinero\":10,\r\n    \"puntajeRestaurante\":10,\r\n    \"comentario\":\"Muy bueno todo, excepto el mozo\"        \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:1001/clientes/encuesta",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"clientes",
+								"encuesta"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "TIEMPO RESTANTE",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "idMesa",
+									"value": "IN852",
+									"type": "text"
+								},
+								{
+									"key": "idPedido",
+									"value": "BFXZD",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:1001/clientes/tiempoEspera",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "1001",
+							"path": [
+								"clientes",
+								"tiempoEspera"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "TOKEN",
+			"value": ""
 		}
 	]
 }

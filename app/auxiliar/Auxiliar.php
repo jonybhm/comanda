@@ -15,24 +15,30 @@ function GenerarClaveAlfaNumerica()
     return $clave = substr($claveAlfaNumerica,-5);
 }
 
-function CalcularDiferenciaTiempoEnMinutos($timestampPrevio,$tiempoEstimado)
+function CalcularDiferenciaTiempoEnMinutos($timestampEnPreparacion,$tiempoEstimado)
 {
     $timestampActual = date("H:i:s");
-
-    //tomo la parte de minutos y lo convierto a int
-    $minutosActual = (int)explode(":",$timestampActual)[1];
-    $minutosPrevio = (int)explode(":",$timestampPrevio)[1];
-
-    //calculo la diferencia
-    $diferenciaMinutos = $minutosActual - $minutosPrevio;
     
-    if($diferenciaMinutos>$tiempoEstimado)
+    //tomo la parte de minutos y lo convierto a int
+    $dateActual = new DateTime($timestampActual);
+    $dateEnPreparacion = new DateTime($timestampEnPreparacion);   
+    
+    $dateEstimado = $dateEnPreparacion->modify("+$tiempoEstimado minutes");
+  
+    $diferencia = $dateEstimado->diff($dateActual)->format('%H:%I:%S');
+
+    
+    if($dateEstimado < $dateActual)
     {
-        return $minutosFaltantes = 0;
+        $diferenciaMinutos = -(int)explode(":",$diferencia)[1];
     }
     else
     {
-        return $minutosFaltantes = $tiempoEstimado-$diferenciaMinutos;
-    } 
+        $diferenciaMinutos = (int)explode(":",$diferencia)[1];
+    }
+
+    
+    return $diferenciaMinutos;
+    
     
 }

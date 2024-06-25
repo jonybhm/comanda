@@ -59,7 +59,7 @@ class PedidoManejador implements IManejadores
 
     public function ObtenerTodos($request,$response, $args)
     {
-        $listaPedidos = PEdido::ConsultarTodosLosPEdidos();
+        $listaPedidos = Pedido::ConsultarTodosLosPEdidos();
 
         if(empty($listaPedidos))
         {
@@ -67,7 +67,40 @@ class PedidoManejador implements IManejadores
         }
         else
         {            
-            $payload = json_encode($listaPedidos);        
+            $payload = "";
+            
+            foreach ($listaPedidos as $pedido)
+            {
+                $pedido = Encuesta::ConsultarTiempoPedido($pedido->id_mesa,$pedido->id);
+                
+                if($pedido && $pedido->estado != "entregado")
+                {
+    
+                    $diferencia = CalcularDiferenciaTiempoEnMinutos($pedido->registrado,(int)$pedido->estimado);
+                    
+                    if($diferencia < 0 )
+                    {
+                        $mensaje = "pedido retrasado. Tiempo extra: ". $diferencia;
+                    }
+                    else
+                    {
+                        $mensaje = "tiempo restante: ".$diferencia." minutos";
+                    }
+                    
+                    $payload .= json_encode(array("pedido"=>$pedido,"mensaje"=>$mensaje));
+                }
+                else if( $pedido->estado == "entregado")
+                {
+                    $payload .= json_encode(array("pedido"=>$pedido,"mensaje" => "Pedido entregado."));
+                }
+                else
+                {
+                    $payload .= json_encode(array("mensaje" => "Pedido no encontrado."));
+    
+                }
+
+            }
+            
         }
 
 

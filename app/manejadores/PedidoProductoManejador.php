@@ -180,6 +180,51 @@ class PedidoProductoManejador
         return $response->withHeader('Content-Type', 'application/json');    
     }
 
+
+    #---------------------------PENDIENTES PEDIDOS A COCINA/BARRA---------------------------
+
+    public function RecibirPedidosEnPreparacionCocina($request,$response, $args)
+    {
+
+        $usuario = $request->getAttribute('user_data');  
+
+        if($usuario)
+        {
+            $tipoPedido = "";            
+            switch($usuario->perfil)
+            {
+                case "cocinero":
+                    $tipoPedido = "comida";
+                    break;
+                case "bartender":
+                    $tipoPedido = "bebida";
+                    break; 
+                case "cervecero":
+                    $tipoPedido = "cerveza";
+                    break;                                        
+            }
+        }               
+    
+        $pedido = Pedido::ConsultarPedidoPorEstado("en preparacion",$tipoPedido);
+        
+        if($pedido)
+        {
+            $payload = json_encode($pedido);
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "Sin pedidos."));
+        }        
+
+        $usuario = $request->getAttribute('user_data');         
+        $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
+        LogUsuario::registrarLog($idUsuario->id, "El usuario ".$usuario->usuario."recibe pedidos pendientes" );
+
+        $response->getBody()->write($payload);
+        
+        return $response->withHeader('Content-Type', 'application/json');    
+    }
+
     
 
     #---------------------------CAMBIAR ESTADO DE LOS PEDIDOS---------------------------
@@ -487,7 +532,6 @@ class PedidoProductoManejador
         if($pagoExitoso)
         {
             Pedido::ModificarEstadoPedido("cobrado",$idPedido);
-            PedidoProducto::EliminarPedidoLuegoDeCobrar($idPedido);
         }
 
         $usuario = $request->getAttribute('user_data');         

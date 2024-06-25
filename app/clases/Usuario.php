@@ -130,7 +130,7 @@ class Usuario
     static public function ConsultarLogeoUsuario($nombreUsuario)
     {
         $pdo = AccederABaseDeDatos('comanda');
-        $query = "SELECT usuarios.nombre_usuario, log_usuarios.accion_tomada, COUNT(log_usuarios.id_usuario) AS cantidad FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.nombre_usuario=? AND accion_tomada LIKE '%sesion%' AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) ";
+        $query = "SELECT usuarios.nombre_usuario, log_usuarios.accion_tomada, log_usuarios.fecha,log_usuarios.hora FROM log_usuarios INNER JOIN usuarios ON log_usuarios.id_usuario = usuarios.id WHERE usuarios.nombre_usuario=? AND accion_tomada LIKE '%sesion%' AND fecha >=  DATE_SUB(NOW(), INTERVAL 30 DAY) ";
         
         $consulta = $pdo->prepare($query);
         $consulta -> bindValue(1, $nombreUsuario, PDO::PARAM_INT);
