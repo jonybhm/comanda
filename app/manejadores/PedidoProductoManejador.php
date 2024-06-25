@@ -68,15 +68,17 @@ class PedidoProductoManejador
                     {
                         $precioParcial = PedidoProducto::AltaProductosPedido($idPedido,$nombreCliente,$producto["idProducto"],$producto["cantidad"]);                    
                     }
+
+                    $nombre = Producto::ConsultarProducto($producto["idProducto"])->nombre_producto;
                                         
-                    $contenidoMensaje = $contenidoMensaje.PHP_EOL.$producto["idProducto"]." agregado al pedido X ".$producto["cantidad"]." por un precio $".$precioParcial; 
+                    $contenidoMensaje .= $nombre." id(".$producto["idProducto"].") X ".$producto["cantidad"]." = $".$precioParcial."||"; 
                 }
                     
                 $precioTotal = $precioTotal + $precioParcial;
                     
                     
             }
-            $payload = json_encode(array("mensaje" => $contenidoMensaje.PHP_EOL."Por un total de $".$precioTotal));
+            $payload = json_encode(array("mensaje" => $contenidoMensaje."||TOTAL: $".$precioTotal."||Mesa N°: ".$idMesa."||Pedido N°: ".$idPedido));
 
             Pedido::ModificarPrecioPedido($precioTotal,$idPedido);
         }
