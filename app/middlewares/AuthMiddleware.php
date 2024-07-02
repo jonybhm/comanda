@@ -9,16 +9,32 @@ require_once '../vendor/autoload.php';
 require_once "./token/JasonWebToken.php";
 
 
+/*
+La clase AuthMiddleware representa la entidad de un MiddleWare que se utiliza para verificar tokens y tipo de usuario a la hora de realizar cualquier peticion  
+ */
 class AuthMiddleware
 {
     private $_perfiles=array();
 
+    /**
+     *
+     * @param mixed $perfiles
+     * 
+     */
     public function __construct($perfiles)
     {
         $this->_perfiles = $perfiles;
         
     }
 
+    /**
+     * 
+     * @param IRequest $request
+     * @param IRequestHandler $requestHandler
+     * 
+     * @return [type]
+     * 
+     */
     public function __invoke(IRequest $request, IRequestHandler $requestHandler)
     {
               

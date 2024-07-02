@@ -3,6 +3,8 @@
 include_once "./auxiliar/Auxiliar.php";
 include_once "./base_de_datos/BaseDeDatos.php";
 
+/* La clase `Pedido` en PHP representa un modelo para gestionar pedidos con propiedades y métodos para
+crear, actualizar y consultar pedidos en una base de datos. */
 class Pedido
 {
     private $_id;
@@ -15,6 +17,19 @@ class Pedido
     private $_fecha;    
     private $_tiempoInicial;    
 
+    /**
+     *
+     * @param null $id
+     * @param null $idMesa
+     * @param null $tiempoInicial
+     * @param null $nombreCliente
+     * @param null $estadoPedido
+     * @param null $tiempoPreparacion
+     * @param null $precioTotal
+     * @param null $foto
+     * @param null $fecha
+     * 
+     */
     public function __construct($id = NULL, $idMesa = NULL, $tiempoInicial = NULL, $nombreCliente = NULL, $estadoPedido = NULL, $tiempoPreparacion = NULL, $precioTotal = NULL, $foto = NULL,  $fecha = NULL)
     {
         $this->_id = $id;
@@ -33,6 +48,16 @@ class Pedido
         return $this->_id;
     }
 
+    /**
+     * La función `AltaPedido` en la clase `Pedido` es responsable de crear una nueva entrada de pedido
+     * en la base de datos.
+     * 
+     * @param mixed $idMesa
+     * @param mixed $nombreCliente
+     * 
+     * @return [type]
+     * 
+     */
     static public function AltaPedido($idMesa,$nombreCliente)
     {
         $claveAlfaNumerica = GenerarClaveAlfaNumerica();
@@ -54,6 +79,16 @@ class Pedido
         }
     }
     
+    /**
+     * 
+     * El método `ConsultarPedido()` en la clase `Pedido` se utiliza para
+     * recuperar un pedido específico de la base de datos según el ID del pedido proporcionado.
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarPedido($id)
     {
 
@@ -69,6 +104,17 @@ class Pedido
         return $elemento;
     }
 
+    /**
+     * El método `ConsultarPedidoPorEstado(,)` en la clase
+     * `Pedido` es responsable de consultar la base de datos para recuperar una lista de pedidos
+     * basados en los parámetros de estado y tipo proporcionados.
+     * 
+     * @param mixed $estado
+     * @param mixed $tipo
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarPedidoPorEstado($estado,$tipo)
     {
 
@@ -83,6 +129,17 @@ class Pedido
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
 
+    /**
+     * 
+     * La función `ConsultarIdPedidoPorIdProductoPedido` en la clase `Pedido` es responsable de
+     * consultar la base de datos para recuperar el ID de un pedido específico con base en el ID del
+     * pedido del producto proporcionado.
+     * 
+     * @param mixed $idPedidoProducto
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarIdPedidoPorIdProductoPedido($idPedidoProducto)
     {
 
@@ -93,11 +150,21 @@ class Pedido
         $consulta -> bindValue(1, $idPedidoProducto, PDO::PARAM_INT);
         $consulta -> execute();
 
-        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Pedido');
+        $consulta -> setFetchMode(PDO::FETCH_CLASS,'Producto');
         $elemento = $consulta -> fetch();
         return $elemento;
     }
 
+    /**
+     * La función `ConsultarIdMesaPorIdPedido()` en la clase `Pedido`
+     * es responsable de consultar la base de datos para recuperar el ID de la tabla asociada con un ID
+     * de pedido específico.
+     * 
+     * @param mixed $idPedido
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarIdMesaPorIdPedido($idPedido)
     {
 
@@ -113,6 +180,14 @@ class Pedido
         return $elemento;
     }
 
+    /**
+     * 
+     * La función `ConsultarTodosLosPedidos()` en la clase `Pedido` es responsable de consultar la base
+     * de datos para recuperar todos los pedidos almacenados en la tabla `pedidos`.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarTodosLosPedidos()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -123,6 +198,16 @@ class Pedido
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');     
     }
 
+    /**
+     * 
+     * Esta función consulta una tabla de base de datos llamada "pedidos" para recuperar los ID de todos los
+     * pedidos que se cancelaron en los últimos 30 días. La consulta selecciona la columna "id" de la
+     * tabla "pedidos" donde la columna "estado" es igual a "cancelado" y la columna "fecha" está
+     * dentro de los últimos 30 días a partir de la fecha actual.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarCancelados()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -134,6 +219,21 @@ class Pedido
     }
 
 
+    /**
+     * 
+     * La `ModificarPedido(,)` en la clase `Pedido` es un método
+     * utilizado para actualizar un registro específico en la tabla `pedidos`
+     * de la base de datos.
+     *
+     * @param mixed $estadoPedido
+     * @param mixed $tiempoPreparacion
+     * @param mixed $precioTotal
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
+    
     static public function ModificarPedido($estadoPedido,$tiempoPreparacion,$precioTotal,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -153,6 +253,16 @@ class Pedido
         }
     }
 
+    /**
+     * ModificarPrecioPedido se encarga de actualizar el precio 
+     * de un pedido específico en una tabla de base de datos "pedidos".
+     *
+     * @param mixed $precioTotal
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ModificarPrecioPedido($precioTotal,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -170,6 +280,18 @@ class Pedido
         }
     }
    
+
+    /**
+     * 
+     * ModificarTiempoPedido se encarga de actualizar el campo 
+     * tiempo_final (hora final) en la tabla pedidos de una base de datos.
+     * 
+     * @param mixed $tiempoFinal
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ModificarTiempoPedido($tiempoFinal,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -187,6 +309,17 @@ class Pedido
         }
     }
 
+
+    /**
+     * ModificarEstadoPedido es responsable de actualizar el estado 
+     * de un pedido en una tabla de base de datos pedidos.
+     * 
+     * @param mixed $estadoFinal
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ModificarEstadoPedido($estadoFinal,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -204,6 +337,15 @@ class Pedido
         }
     }
 
+    /**
+     * `BorrarPedido` se encarga de eliminar un registro 
+     * de la tabla `pedidos` en una base de datos. 
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function BorrarPedido($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -220,6 +362,16 @@ class Pedido
         }
     }
 
+    /**
+     * 
+     * `ConsultarPedidoMesaMasUsada` dentro de una clase. 
+     * Este método consiste en consultar una tabla de base de datos llamada "pedidos" para
+     * encontrar la tabla más utilizada en los últimos 30 días en función del recuento de pedidos
+     * realizados en cada tabla.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarPedidoMesaMasUsada()
     {
 
@@ -233,6 +385,15 @@ class Pedido
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');  
     }
 
+    /**
+     * 
+     * Este método se utiliza para consultar una tabla de base de datos llamada
+     * "pedidos" para encontrar la tabla menos utilizada en los últimos 30 días según la cantidad de
+     * pedidos realizados en cada tabla.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarPedidoMesaMenosUsada()
     {
 
@@ -246,6 +407,16 @@ class Pedido
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Pedido');  
     }
 
+    /**
+     * Este método se utiliza para consultar una tabla de base de datos llamada
+     * "pedidos" para encontrar los pedidos con estado de entregados.
+     * 
+     * @param mixed $idPedido
+     * 
+     * @return [type]
+     * 
+     */
+    
     static public function ConsultarPedidoEntregados($idPedido)
     {
 
@@ -262,8 +433,3 @@ class Pedido
         return $elemento;
     }
 } 
-
-
-
-
-

@@ -1,9 +1,13 @@
 <?php
+// TODO Documentar 
 
 include_once "./auxiliar/Auxiliar.php";
 include_once "./base_de_datos/BaseDeDatos.php";
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 
+/**
+ * La clase EstadisticaManejador() 
+ */
 class EstadisticaManejador
 {
     #=============================MESAS MAS USADAS=============================

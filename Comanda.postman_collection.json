@@ -43,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"usuarioEmpleado\":\"socio1\",\r\n    \"contrasenaEmpleado\":\"1234\"\r\n}",
+							"raw": "{\r\n    \"usuarioEmpleado\":\"mozo1\",\r\n    \"contrasenaEmpleado\":\"1234\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1249,8 +1249,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [],
 								"body": {
 									"mode": "formdata",
@@ -1273,7 +1276,7 @@
 									]
 								},
 								"url": {
-									"raw": "http://localhost:1001/listados/Exportar",
+									"raw": "http://localhost:1001/listados/exportar",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1281,7 +1284,7 @@
 									"port": "1001",
 									"path": [
 										"listados",
-										"Exportar"
+										"exportar"
 									]
 								}
 							},
@@ -1371,7 +1374,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"idMesa\":\"D4F96\",\r\n    \"nombreCliente\":\"Jose\",\r\n    \"pedido1\":\r\n    {\r\n        \"idProducto\":5,\r\n        \"cantidad\":1\r\n    },\r\n    \"pedido2\":\r\n    {\r\n        \"idProducto\":6,\r\n        \"cantidad\":2\r\n    },\r\n    \"pedido3\":\r\n    {\r\n        \"idProducto\":7,\r\n        \"cantidad\":1\r\n    },\r\n    \"pedido4\":\r\n    {\r\n        \"idProducto\":8,\r\n        \"cantidad\":1\r\n    }\r\n}",
+							"raw": "{\r\n    \"idMesa\":\"Q8GU4\",\r\n    \"nombreCliente\":\"Jose\",\r\n    \"pedido1\":\r\n    {\r\n        \"idProducto\":5,\r\n        \"cantidad\":1\r\n    },\r\n    \"pedido2\":\r\n    {\r\n        \"idProducto\":6,\r\n        \"cantidad\":2\r\n    },\r\n    \"pedido3\":\r\n    {\r\n        \"idProducto\":7,\r\n        \"cantidad\":1\r\n    },\r\n    \"pedido4\":\r\n    {\r\n        \"idProducto\":8,\r\n        \"cantidad\":1\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1423,8 +1426,8 @@
 									"src": "postman-cloud:///1ef329ae-6cb4-4bd0-91f8-78723801db3f"
 								},
 								{
-									"key": "idMesa",
-									"value": "IN852",
+									"key": "idPedido",
+									"value": "E9W96",
 									"type": "text"
 								}
 							]
@@ -1504,15 +1507,18 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "PUT",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://localhost:1001/entregaPedidos/108",
+							"raw": "http://localhost:1001/entregaPedidos/preparacion",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1520,7 +1526,7 @@
 							"port": "1001",
 							"path": [
 								"entregaPedidos",
-								"108"
+								"preparacion"
 							]
 						}
 					},
@@ -1609,7 +1615,18 @@
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
-							"urlencoded": []
+							"urlencoded": [
+								{
+									"key": "estadoPedidoProducto",
+									"value": "listo para entregar",
+									"type": "text"
+								},
+								{
+									"key": "tiempoEstimado",
+									"value": "5",
+									"type": "text"
+								}
+							]
 						},
 						"url": {
 							"raw": "http://localhost:1001/reciboPedidos/pendientes",
@@ -1713,11 +1730,8 @@
 							}
 						}
 					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "urlencoded",
@@ -1737,7 +1751,7 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:1001/reciboPedidos/",
+							"raw": "http://localhost:1001/reciboPedidos/117",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -1745,7 +1759,7 @@
 							"port": "1001",
 							"path": [
 								"reciboPedidos",
-								""
+								"117"
 							]
 						}
 					},
@@ -1790,7 +1804,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"idMesa\":\"IN852\",\r\n    \"idPedido\":\"BFXZD\",\r\n    \"puntajeMesa\":3,\r\n    \"puntajeMozo\":1,\r\n    \"puntajeCocinero\":10,\r\n    \"puntajeRestaurante\":10,\r\n    \"comentario\":\"Muy bueno todo, excepto el mozo\"        \r\n}",
+							"raw": "{\r\n    \"idMesa\":\"Q8GU4\",\r\n    \"idPedido\":\"YMHJC\",\r\n    \"puntajeMesa\":3,\r\n    \"puntajeMozo\":1,\r\n    \"puntajeCocinero\":10,\r\n    \"puntajeRestaurante\":10,\r\n    \"comentario\":\"Muy bueno todo, excepto el mozo\"        \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

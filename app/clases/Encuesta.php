@@ -3,6 +3,10 @@
 include_once "./auxiliar/Auxiliar.php";
 include_once "./base_de_datos/BaseDeDatos.php";
 
+/* La clase `Encuesta` en PHP representa una entidad de encuesta con propiedades relacionadas con
+calificaciones, comentarios y fechas, junto con métodos para insertar datos de encuesta, consultar
+información de tiempo para un pedido específico y recuperar las cinco encuestas superiores e
+inferiores según las calificaciones de la tabla dentro. los últimos 30 días. */
 class Encuesta
 {
     private $_id;
@@ -15,6 +19,19 @@ class Encuesta
     private $_comentario;  
     private $_fecha;    
 
+    /**
+     *
+     * @param null $id
+     * @param null $puntajeMesa
+     * @param null $fecha
+     * @param null $puntajeRestaurante
+     * @param null $idMesa
+     * @param null $idPedido
+     * @param null $puntajeMozo
+     * @param null $comentario
+     * @param null $puntajeCocinero
+     * 
+     */
     public function __construct($id = NULL, $puntajeMesa = NULL, $fecha = NULL, $puntajeRestaurante = NULL, $idMesa = NULL, $idPedido = NULL, $puntajeMozo = NULL, $comentario = NULL, $puntajeCocinero = NULL)
     {
         $this->_id = $id;
@@ -27,6 +44,22 @@ class Encuesta
         $this->_comentario = $comentario;        
         $this->_fecha = $fecha;        
     }
+    
+    /**
+     * La `AltaEncuesta` en la clase `Encuesta` es un método estático
+     * utilizado para insertar un nuevo registro de encuesta en la base de datos. 
+     *
+     * @param mixed $puntajeMesa
+     * @param mixed $puntajeRestaurante
+     * @param mixed $idMesa
+     * @param mixed $idPedido
+     * @param mixed $puntajeMozo
+     * @param mixed $comentario
+     * @param mixed $puntajeCocinero
+     * 
+     * @return [type]
+     * 
+     */
     
     static public function AltaEncuesta($puntajeMesa,$puntajeRestaurante,$idMesa,$idPedido,$puntajeMozo,$comentario,$puntajeCocinero)
     {
@@ -52,7 +85,19 @@ class Encuesta
             return NULL;
         }
     }
-    
+
+
+    /**
+     * El método `ConsultarTiempoPedido(,)` en la clase
+     * `Encuesta` se utiliza para consultar la base de datos en busca de información relacionada con el
+     * tiempo de una orden específica. 
+     *
+     * @param mixed $idMesa
+     * @param mixed $idPedido
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarTiempoPedido($idMesa,$idPedido)
     {
 
@@ -69,6 +114,17 @@ class Encuesta
         return $elemento;
     }
 
+
+    /**
+     * 
+     * El método `ConsultarTopCincoEncuestas()` en la clase `Encuesta` se
+     * utiliza para recuperar las cinco encuestas principales según las calificaciones de la tabla
+     * dentro de los últimos 30 días de la base de datos. 
+     * 
+     * @return [type]
+     * 
+     */
+
     static public function ConsultarTopCincoEncuestas()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -81,6 +137,15 @@ class Encuesta
         
     }
 
+    /**
+     * 
+     * El método `ConsultarBottomCincoEncuestas()` en la clase `Encuesta` se
+     * utiliza para recuperar las cinco últimas encuestas basadas en las calificaciones de la base de
+     * datos dentro de los últimos 30 días. 
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarBottomCincoEncuestas()
     {
         $pdo = AccederABaseDeDatos('comanda');

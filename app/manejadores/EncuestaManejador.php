@@ -4,8 +4,23 @@ include_once "./clases/Encuesta.php";
 include_once "./auxiliar/auxiliar.php";
 include_once "./interfaces/IManejadores.php";
 
+
+/**
+ * La clase EncuestaManejador define la entidad encargada de manejar las encuestas realizadas por los clientes
+ */
 class EncuestaManejador
 {
+    /**
+     * La funcion RealizarEncuesta() se encarga de tomar los datos pasados por parametro por
+     * el cliente para subirlo a la tabla 'encuestas' de la base de datos.
+     *
+     * @param mixed $request
+     * @param mixed $response
+     * @param mixed $args
+     * 
+     * @return [type]
+     * 
+     */
     public function RealizarEncuesta($request,$response, $args)
     {
         $jsonData = file_get_contents('php://input');
@@ -26,6 +41,17 @@ class EncuestaManejador
     
     }
 
+    /**
+     * La funcion ObtenerTiempoEspera() se encarga de obtener la informacion de tiempo restante mediante
+     * el numero de pedido y numero de mesa.
+     *
+     * @param mixed $request
+     * @param mixed $response
+     * @param mixed $args
+     * 
+     * @return [type]
+     * 
+     */
     public function ObtenerTiempoEspera($request,$response, $args)
     {
         $parametros = $request->getParsedBody();    

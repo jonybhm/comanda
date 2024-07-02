@@ -1,6 +1,8 @@
 
 <?php
 
+/* La clase `LogUsuario` en PHP está diseñada para manejar el registro de acciones del usuario con
+métodos para registrar registros, recuperar registros por ID y recuperar todos los registros. */
 class LogUsuario
 {
     private $_id;
@@ -9,6 +11,15 @@ class LogUsuario
     private $_fecha;
     private $_hora;
 
+    /**
+     *
+     * @param null $id
+     * @param null $idUsuario
+     * @param null $accionTomada
+     * @param null $fecha
+     * @param null $hora
+     * 
+     */
     public function __construct($id = NULL, $idUsuario = NULL, $accionTomada = NULL, $fecha = NULL, $hora = NULL)
     {
         $this->_idUsuario = $idUsuario;
@@ -18,6 +29,18 @@ class LogUsuario
         $this->_hora = $hora;        
 
     }
+    
+    /**
+     * 
+     * La función `RegistrarLog` inserta una entrada de registro para una acción del usuario en una
+     * tabla de base de datos en PHP.     
+     * 
+     * @param mixed $idUsuario
+     * @param mixed $accionTomada
+     * 
+     * @return [type]
+     * 
+     */
     
     public static function RegistrarLog($idUsuario,$accionTomada)
     {
@@ -40,6 +63,16 @@ class LogUsuario
         }
     }
 
+    /**
+     * 
+     * El método `ObtenerLog()` en la clase `LogUsuario` se utiliza para
+     * recuperar una entrada de registro de la base de datos basada en el `id` proporcionado.
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ObtenerLog($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -53,7 +86,15 @@ class LogUsuario
         $elemento = $consulta -> fetch();
         return $elemento;
     }
-
+    
+    /**
+     * 
+     * El método `ObtenerTodosLosLogs()` en la clase `LogUsuario` recupera todas las entradas del
+     * registro de la tabla de la base de datos `log_usuarios`. 
+     *  
+     * @return [type]
+     * 
+     */
     static public function ObtenerTodosLosLogs()
     {
         $pdo = AccederABaseDeDatos('comanda');

@@ -1,5 +1,7 @@
 <?php
 
+/* La clase `TiempoEspera` en PHP representa un modelo para gestionar tiempos de espera con propiedades y métodos para
+crear, actualizar y consultar la tabla de pedidos_tiempo en una base de datos. */
 class TiempoEspera
 {
     private $_id;
@@ -11,6 +13,19 @@ class TiempoEspera
     private $_idPedido;
     private $_fecha;
 
+    /**
+     * [Description for __construct]
+     *
+     * @param null $id
+     * @param null $tiempoInicial
+     * @param null $tiempoFinal
+     * @param null $entregaEstimada
+     * @param null $entregaReal
+     * @param null $entregaTardia
+     * @param null $idPedido
+     * @param null $fecha
+     * 
+     */
     public function __construct($id = NULL, $tiempoInicial = NULL, $tiempoFinal = NULL, $entregaEstimada = NULL, $entregaReal = NULL, $entregaTardia = NULL, $idPedido = NULL, $fecha = NULL)
     {
         $this->_tiempoInicial = $tiempoInicial;
@@ -23,7 +38,17 @@ class TiempoEspera
         $this->_fecha = $fecha;
     }
     
-    //ESTE SE USA CUANDO CAMBIA EL ESTADO A "EN PREPARACION"
+    /**
+     * La función `AltaTiempoEspera` en la clase `TiempoEspera` es responsable de crear una nueva entrada de pedidos_tiempo
+     * en la base de datos. 
+     *
+     * @param mixed $idPedidoProducto
+     * @param mixed $entregaEstimada
+     * @param mixed $idPedido
+     * 
+     * @return [type]
+     * 
+     */
     static public function AltaTiempoEspera($idPedidoProducto,$entregaEstimada,$idPedido)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -44,7 +69,18 @@ class TiempoEspera
 
     }    
 
-    //ESTE SE USA CUANDO CAMBIA EL ESTADO A "ENTREGADO"
+    
+    /**
+     * La funcion ModificarTiempoEsperaFinal() actualiza el tiempo de entrega estimado 
+     * y el tiempo de entrega real en base a la diferencia de las timestamps.
+     * Estos valores se modifican en la fila que corresponde con el id del pedido_producto
+     *
+     * @param mixed $tiempoFinal
+     * @param mixed $idPedidoProducto
+     * 
+     * @return [type]
+     * 
+     */
     static public function ModificarTiempoEsperaFinal($tiempoFinal,$idPedidoProducto)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -64,7 +100,15 @@ class TiempoEspera
 
     }
 
-    //ESTE SE USA CUANDO CAMBIA EL ESTADO A "EN PREPARACION" (AL MISMO TIEMPO QUE EL ANTERIOR)
+    
+    
+    /**
+     * La funcion ModificarTiempoEsperaAtrasado() actualiza el valor de entrega tardia como verdadero(1) 
+     * cuando el tiempo de entrega real se mayor que el de entrega estimada. 
+     *
+     * @return [type]
+     * 
+     */
     static public function ModificarTiempoEsperaAtrasado()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -82,6 +126,14 @@ class TiempoEspera
 
     }
 
+    /**
+     * 
+     * El método `ConsultarTiempoEsperaTardios()` en la clase `TiempoEspera` se utiliza para
+     * recuperar un tiempo de espera que sido marcado como tardio.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarTiempoEsperaTardios()
     {
         $pdo = AccederABaseDeDatos('comanda');

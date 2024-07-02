@@ -3,9 +3,23 @@
 include_once "./clases/ArchivoPDF.php";
 
 
+/**
+ * La clase ArchivoManejador define la entidad que se encarga de manejar todo lo relacionado a archivos .csv y .pdf
+ */
 class ArchivoManejador
 {
 
+    /**
+     * La funcion Importar() se utiliza para importar archivos .csv y 
+     * subir las datos del mismo en la tabla para productos
+     *
+     * @param mixed $request
+     * @param mixed $response
+     * @param mixed $args
+     * 
+     * @return [type]
+     * 
+     */
     public static function Importar($request, $response, $args)
     {
         $archivo = $_FILES['archivo']['tmp_name'];
@@ -41,8 +55,20 @@ class ArchivoManejador
         return $response->withHeader('Content-Type', 'application/json');
     }
 
+    /**
+     * La funcion Exportar() se utiliza para Exportar archivos .csv y 
+     * descargar las datos de la tabla productos en una base de datos a un archivo.
+     *
+     * @param mixed $request
+     * @param mixed $response
+     * @param mixed $args
+     * 
+     * @return [type]
+     * 
+     */
     public static function Exportar($request, $response, $args)
     {
+        //TODO hacer que el archivo .csv sea descargable desde el postman
         $fecha = new DateTime(date("d-m-Y"));
         $rutaArchivo = "./archivos/csv";
         $titulo = "Productos";
@@ -52,9 +78,10 @@ class ArchivoManejador
             mkdir($rutaArchivo, 0777, true);
         }
     
-        $rutaCompleta = $rutaArchivo . "/Lista".$titulo."_".date_format($fecha, 'Y-m-d_H-i-s');
+        $nombreArchivo = "/Lista".$titulo."_".date_format($fecha, 'Y-m-d_H-i-s').".csv";
+        $rutaCompleta = $rutaArchivo . $nombreArchivo;
 
-        $archivo = fopen($rutaCompleta.".csv", 'w');
+        $archivo = fopen($rutaCompleta, 'w');
 
         if(!$archivo)
         {
@@ -72,18 +99,35 @@ class ArchivoManejador
             {
                 fputcsv($archivo, array_slice((array)$producto,4));
             }
-
+            
             fclose($archivo);
-
+            
             ArchivoManejador::ExportarPDF($titulo,$productos,$fecha);
-
-            $payload = json_encode(array("mensaje"=> "se exporoto el listado de productos"));
-            $response->getBody()->write($payload);
-            return $response->withHeader('Content-Type', 'application/json');
+            
+            // $contendido = fread($archivo, filesize($rutaCompleta));
+            $contendido = file_get_contents($rutaCompleta);
+            //unlink($rutaCompleta);
+            $response->getBody()->write($contendido);
+            return $response
+            ->withHeader('Content-Type', 'text/csv')
+            ->withHeader('Content-Disposition', 'attachment; filename="'.$nombreArchivo.'"')
+            ->withHeader('Content-Length', strlen($contendido));
+            
         }           
-
     }
 
+    /**
+     * 
+     * La funcion ExportarPDF() se utiliza para exportar archivos .pdf 
+     * con la informacion de la tabla productos en la base de datos
+     * 
+     * @param mixed $titulo
+     * @param mixed $datos
+     * @param mixed $fecha
+     * 
+     * @return [type]
+     * 
+     */
     public static function ExportarPDF($titulo,$datos,$fecha)
     {
         // create new PDF document

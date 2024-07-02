@@ -1,5 +1,5 @@
 <?php
-
+// TODO Documentar
 use Illuminate\Support\Facades\Log;
 
 include_once "./clases/Pedido.php";
@@ -94,6 +94,14 @@ class PedidoProductoManejador
     }
     #---------------------------TOMAR FOTO---------------------------
 
+  
+    /**
+     * @param mixed $request
+     * @param mixed $response
+     * @param mixed $args
+     * 
+     * @return [type]
+     */
     public function TomarFoto($request,$response, $args)
     {
         $fecha = new DateTime(date("d-m-Y"));
@@ -106,25 +114,26 @@ class PedidoProductoManejador
 
         $parametros = $request->getParsedBody();
         $archivos = $request->getUploadedFiles();
-        $idMesa = $parametros['idMesa'];
+        $idPedido = $parametros['idPedido'];
         $payload = "";
 
-        if (isset($archivos['foto']) && $idMesa) 
+        if (isset($archivos['foto']) && $idPedido) 
         {
-            $fotoArchivo = $archivos['foto'];            
-        
-            $fotoContenido = $fotoArchivo->getStream()->getContents();
+
             
-            PedidoProducto::AgregarFoto($fotoContenido, $idMesa);
+            $destinoImagen = $rutaArchivo.$idPedido."_".date_format($fecha, 'Y-m-d_H-i-s').".jpg";
+            move_uploaded_file($_FILES["foto"]["tmp_name"],$destinoImagen);
+            
+            PedidoProducto::AgregarFoto($destinoImagen, $idPedido);
             
             $payload = json_encode(['mensaje' => 'Foto subida.']);
             
-        } else {
+        }
+        else 
+        {
             $payload = json_encode(['mensaje' => 'Error al subir foto, uno o más campos vacíos.']);
         }
         
-        $destinoImagen = $rutaArchivo.$idMesa."_".date_format($fecha, 'Y-m-d_H-i-s').".jpg";
-        move_uploaded_file($_FILES["foto"]["tmp_name"],$destinoImagen);
 
         $usuario = $request->getAttribute('user_data');         
         $idUsuario = Usuario::ConsultarUsuarioPorNombre($usuario->usuario);       
@@ -233,8 +242,28 @@ class PedidoProductoManejador
     public function ModificarPedidosPendientes($request,$response, $args)
     {
         $usuario = $request->getAttribute('user_data');  
+
+        if($usuario)
+        {
+            $tipoPedido = "";            
+            switch($usuario->perfil)
+            {
+                case "cocinero":
+                    $tipoPedido = "comida";
+                    break;
+                case "bartender":
+                    $tipoPedido = "bebida";
+                    break; 
+                case "cervecero":
+                    $tipoPedido = "cerveza";
+                    break;                                        
+            }
+        }               
+    
        
         $idPedidoProducto = $args['idPedidoProducto'];
+
+        $tipoProducto = PedidoProducto::ConsultarTipoProducto($idPedidoProducto)->tipo_producto;
         
         $parametros = $request->getParsedBody();    
 
@@ -248,22 +277,28 @@ class PedidoProductoManejador
         $estadoPedidoProducto = $parametros['estadoPedidoProducto'];
         $tiempoEstimado = $parametros['tiempoEstimado'];
         
-        
-        if(empty($idPedidoProducto))
+        if($tipoProducto == $tipoPedido)
         {
-            $payload = json_encode(array("mensaje" => "Error al buscar la mesa del pedido, campo id vacio."));
-        }
-        else
-        {
-            if(empty($estadoPedidoProducto) || empty($tiempoEstimado))
+            if(empty($idPedidoProducto))
             {
-                $payload = json_encode(array("mensaje" => "Error al modificar pedido ".$idPedidoProducto.", uno o mas campos vacios."));
+                $payload = json_encode(array("mensaje" => "Error al buscar la mesa del pedido, campo id vacio."));
             }
             else
             {
-                PedidoProducto::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idPedidoProducto);
-                $payload = json_encode(array("mensaje" => "Estado del pedido ".$idPedidoProducto." modificado con exito a: '".$estadoPedidoProducto."'"));
+                if(empty($estadoPedidoProducto) || empty($tiempoEstimado))
+                {
+                    $payload = json_encode(array("mensaje" => "Error al modificar pedido ".$idPedidoProducto.", uno o mas campos vacios."));
+                }
+                else
+                {
+                    PedidoProducto::ModificarProductoPedido($estadoPedidoProducto,$tiempoEstimado,$idPedidoProducto);
+                    $payload = json_encode(array("mensaje" => "Estado del pedido ".$idPedidoProducto." modificado con exito a: '".$estadoPedidoProducto."'"));
+                }
             }
+        }
+        else
+        {
+            $payload = json_encode(array("mensaje" => "No puede modificar pedidos de otro sector."));
         }
 
         //VERIFICAR que AL MENOS UN ELEMENTO ESTE EN PREPARACION 

@@ -4,6 +4,8 @@ include_once "./auxiliar/Auxiliar.php";
 include_once "./base_de_datos/BaseDeDatos.php";
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 
+/* La clase `Usuario` en PHP representa un modelo para gestionar Usuarios con propiedades y métodos para
+crear, actualizar y consultar Usuarios en una base de datos. */
 class Usuario
 {
     private $_id;
@@ -13,6 +15,16 @@ class Usuario
     private $_fechaIngreso;
     private $_estado;
 
+    /**
+     *
+     * @param null $id
+     * @param null $nombreUsuario
+     * @param null $estado
+     * @param null $password
+     * @param null $tipoEmpleado
+     * @param null $fechaIngreso
+     * 
+     */
     public function __construct($id = NULL, $nombreUsuario = NULL, $estado = NULL, $password = NULL, $tipoEmpleado = NULL, $fechaIngreso = NULL)
     {
         $this->_nombreUsuario = $nombreUsuario;
@@ -23,6 +35,17 @@ class Usuario
         $this->_estado = $estado;        
     }
 
+    /**
+     * La función `AltaUsuario` en la clase `Usuario` es responsable de crear una nueva entrada de Usuario
+     * en la base de datos.
+     *
+     * @param mixed $nombreUsuario
+     * @param mixed $password
+     * @param mixed $tipo
+     * 
+     * @return [type]
+     * 
+     */
     static public function AltaUsuario($nombreUsuario,$password,$tipo)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -44,6 +67,15 @@ class Usuario
 
     }
     
+    /**
+     * El método `ConsultarUsuario()` en la clase `Usuario` se utiliza para
+     * recuperar un Usuario específico de la base de datos según el ID del Usuario proporcionado.
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarUsuario($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -58,6 +90,15 @@ class Usuario
         return $elemento;
     }
 
+    /**
+     * El método `ConsultarUsuarioPorNombre()` en la clase `Usuario` se utiliza para
+     * recuperar un Usuario específico de la base de datos según el nombre del Usuario proporcionado.
+     * 
+     * @param mixed $nombreUsuario
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarUsuarioPorNombre($nombreUsuario)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -73,6 +114,13 @@ class Usuario
     }
     
     
+    /**
+     * La función `ConsultarTodosLosUsuarios()` en la clase `Usuario` es responsable de consultar la base
+     * de datos para recuperar todos los Usuarios almacenados en la tabla `Usuarios`.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarTodosLosUsuarios()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -83,6 +131,13 @@ class Usuario
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
+    /**
+     * La función `ConsultarTodosLosEstadosDeUsuarios()` en la clase `Usuario` es responsable de consultar la base
+     * de datos para recuperar todos los estados de Usuarios almacenados en la tabla `Usuarios`.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarTodosLosEstadosDeUsuarios()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -93,6 +148,15 @@ class Usuario
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
+    /**
+     * La función `ConsultarCantidadOPeracionesUsuarioSector()` en la clase `Usuario` es responsable de consultar la base
+     * de datos para recuperar la cantidad de operaciones realizadas por cada usuario dado un tipo de Usuario especifico
+     * 
+     * @param mixed $tipoEmpleado
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarCantidadOPeracionesUsuarioSector($tipoEmpleado)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -104,6 +168,16 @@ class Usuario
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
+    /**
+     * La función `ConsultarCantidadOPeracionesUsuarioNombre()` en la clase `Usuario` es responsable de consultar la base
+     * de datos para recuperar la cantidad de operaciones realizadas por cada usuario dado un nombre de Usuario especifico
+     * 
+     * @param mixed $tipoEmpleado
+     * @param mixed $nombreUsuario
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarCantidadOPeracionesUsuarioNombre($tipoEmpleado,$nombreUsuario)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -116,6 +190,15 @@ class Usuario
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
+    /**
+     * La función `ConsultarCantidadOPeracionesUsuarioSectoryNombre()` en la clase `Usuario` es responsable de consultar la base
+     * de datos para recuperar la cantidad de operaciones realizadas por cada usuario dado un nombre de Usuario y sector especifico
+     * 
+     * @param mixed $tipoEmpleado
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarCantidadOPeracionesUsuarioSectoryNombre($tipoEmpleado)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -127,6 +210,15 @@ class Usuario
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
+    /**
+     * La función `ConsultarLogeoUsuario()` en la clase `Usuario` es responsable de consultar la base
+     * de datos para recuperar la cantidad de logins realizados por cada usuario dado un nombre de Usuario especifico
+     * 
+     * @param mixed $nombreUsuario
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarLogeoUsuario($nombreUsuario)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -138,6 +230,20 @@ class Usuario
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Usuario');
     }
 
+    /**
+     * 
+     * La `ModificarUsuario(,)` en la clase `Usuario` es un método
+     * utilizado para actualizar un registro específico en la tabla `Usuarios`
+     * de la base de datos.
+     * 
+     * @param mixed $nombreUsuario
+     * @param mixed $password
+     * @param mixed $tipo
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ModificarUsuario($nombreUsuario,$password,$tipo,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -159,6 +265,16 @@ class Usuario
 
     }
 
+    /**
+     * `BorradoOSuspencionUsuario` se encarga de actualizar un registro 
+     * de la tabla `usuarios` en una base de datos, con estados de 'suspendido' o 'borrado'. 
+     * 
+     * @param mixed $nuevoEstado
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function BorradoOSuspencionUsuario($nuevoEstado,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -178,8 +294,15 @@ class Usuario
 
     }
 
-
-
+    /**
+     * `BorrarUsuario` se encarga de eliminar un registro 
+     * de la tabla `usuarios` en una base de datos. 
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function BorrarUsuario($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -197,6 +320,16 @@ class Usuario
         }
     }
 
+    /**
+     * La funcion VerificarUsuarioYContraseña() se utiliza para comparar la clave dada para un usuario y su hash almacenado en la base de datos
+     * con el finde verificar que el usuario que se esta intentando logear sea el correcto.
+     *
+     * @param mixed $nombreUsuario
+     * @param mixed $password
+     * 
+     * @return [type]
+     * 
+     */
     static public function VerificarUsuarioYContraseña($nombreUsuario,$password)
     {
         $pdo = AccederABaseDeDatos('comanda');

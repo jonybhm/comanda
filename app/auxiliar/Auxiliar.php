@@ -5,6 +5,14 @@ use Psr\Http\Server\RequestHandlerInterface as IRequestHandler;
 use Slim\Psr7\Response as ResponseClass;
 
 
+
+/**
+ * La función "GenerarClaveAlfaNumerica" genera una clave alfanumérica de 5 caracteres aplicando hash a
+ * un número aleatorio y extrayendo caracteres alfanuméricos del mismo.
+ * 
+ * @return [type]
+ * 
+ */
 function GenerarClaveAlfaNumerica()
 {
     //Armo un hash completo
@@ -15,6 +23,18 @@ function GenerarClaveAlfaNumerica()
     return $clave = substr($claveAlfaNumerica,-5);
 }
 
+
+/**
+ * 
+ * La función calcula la diferencia horaria en minutos entre una marca de tiempo determinada y la hora
+ * actual, considerando un intervalo de tiempo estimado.
+ * 
+ * @param mixed $timestampEnPreparacion
+ * @param mixed $tiempoEstimado
+ * 
+ * @return [type]
+ * 
+ */
 function CalcularDiferenciaTiempoEnMinutos($timestampEnPreparacion,$tiempoEstimado)
 {
     $timestampActual = date("H:i:s");

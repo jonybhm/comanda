@@ -3,17 +3,34 @@
 include_once "./auxiliar/Auxiliar.php";
 include_once "./base_de_datos/BaseDeDatos.php";
 
+/* La clase `Mesa` en PHP contiene métodos estáticos para interactuar con una tabla de base de datos
+que representa mesas en un restaurante, incluidas operaciones como crear, consultar, actualizar y
+eliminar registros de la tabla. */
 class Mesa
 {
     private $_id;
     private $_estado;
 
+    /**
+     *
+     * @param null $id
+     * @param null $estado
+     * 
+     */
     public function __construct($id = NULL, $estado = NULL)
     {
         $this->_id = $id;
         $this->_estado = $estado;        
     }
     
+    /**
+     * 
+     * La `AltaMesa()` en la clase `Mesa` es un método estático utilizado para
+     * crear un nuevo registro en la tabla `mesas` de la base de datos.
+     * 
+     * @return [type]
+     * 
+     */
     static public function AltaMesa()
     {
         $claveAlfaNumerica = GenerarClaveAlfaNumerica();
@@ -33,6 +50,17 @@ class Mesa
         return $claveAlfaNumerica;
     }
     
+    /**
+     * 
+     * El método `ConsultarMesa()` en la clase `Mesa` se utiliza para
+     * recuperar un registro específico de la tabla `mesas` en la base de datos según el `id`
+     * proporcionado.
+     *  
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarMesa($id)
     {
 
@@ -49,6 +77,14 @@ class Mesa
     }
     
     
+    /**
+     * 
+     * La función `ConsultarTodasLasMesas()` en la clase `Mesa` es un método público estático utilizado
+     * para recuperar todos los registros de la tabla `mesas` en la base de datos.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarTodasLasMesas()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -59,6 +95,16 @@ class Mesa
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
     }
 
+
+    /**
+     * La función `ConsultarMesaMayorImporte()` en la clase `Mesa` está consultando la base de datos
+     * para encontrar la tabla `mesas` con el precio total más alto (`precio_total`) de pedidos
+     * (`pedidos`) dentro de los últimos 30 días. 
+     * 
+     * @return [type]
+     * 
+     */
+    
     static public function ConsultarMesaMayorImporte()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -69,6 +115,15 @@ class Mesa
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
     }
     
+
+    /**
+     * La función `ConsultarMesaMenorImporte()` en la clase `Mesa` está consultando la base de datos
+     * para encontrar la tabla `mesas` con el precio total más bajo (`precio_total`) de los pedidos
+     * (“pedidos`) dentro de los últimos 30 días.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarMesaMenorImporte()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -79,6 +134,15 @@ class Mesa
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
     }
 
+    /**
+     * La función `ConsultarMesasPorOrdenDeFacturacionDescendente()` en la clase `Mesa` está
+     * consultando la base de datos para recuperar una lista de tablas (`mesas`) ordenadas por el monto
+     * total facturado (`precio_total`) para pedidos (`pedidos`) dentro de los últimos 30 días en orden
+     * descendente.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarMesasPorOrdenDeFacturacionDescendente()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -89,6 +153,15 @@ class Mesa
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
     }
 
+    /**
+     * La función `ConsultarMesasPorOrdenDeFacturacionAscendente()` en la clase `Mesa` está consultando
+     * la base de datos para recuperar una lista de tablas (`mesas`) ordenadas por el monto total
+     * facturado (`precio_total`) para pedidos (`pedidos`) dentro de los últimos 30 días en orden
+     * ascendente según el monto total facturado.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarMesasPorOrdenDeFacturacionAscendente()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -100,6 +173,19 @@ class Mesa
     }
 
 
+    /**
+     * 
+     * La función `ConsultarFacturacionMesasEntreFechas` en la clase `Mesa` consulta la base de datos
+     * para recuperar los ingresos totales ("facturado") para una tabla específica ("mesa") dentro de
+     * un rango de fechas determinado.
+     * 
+     * @param mixed $fechaMin
+     * @param mixed $fechaMax
+     * @param mixed $idMesa
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarFacturacionMesasEntreFechas($fechaMin,$fechaMax,$idMesa)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -113,6 +199,19 @@ class Mesa
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Mesa');     
     }
 
+
+    /**
+     * 
+     * La `ModificarMesa(,)` en la clase `Mesa` es un método
+     * utilizado para actualizar el campo `estado_mesa` de un registro específico en la tabla `mesas`
+     * de la base de datos.
+     * 
+     * @param mixed $estado
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ModificarMesa($estado,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -130,6 +229,17 @@ class Mesa
         }
     }
 
+    /**
+     * 
+     * La función `BorrarMesa()` en la clase `Mesa` es responsable de
+     * eliminar un registro específico de la tabla `mesas` en la base de datos según el `id`
+     * proporcionado.
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function BorrarMesa($id)
     {
         $pdo = AccederABaseDeDatos('comanda');

@@ -1,5 +1,5 @@
 <?php
-
+// TODO Documentar
 include_once "./clases/Producto.php";
 include_once "./auxiliar/auxiliar.php";
 include_once "./interfaces/IManejadores.php";

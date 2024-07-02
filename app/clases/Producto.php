@@ -3,6 +3,8 @@
 include_once "./auxiliar/Auxiliar.php";
 include_once "./base_de_datos/BaseDeDatos.php";
 
+/* La clase `Produto` en PHP representa un modelo para gestionar Produtos con propiedades y métodos para
+crear, actualizar y consultar Produtos en una base de datos. */
 class Producto
 {
     private $_id;
@@ -10,6 +12,15 @@ class Producto
     private $_precioProducto;
     private $_tipoProducto;
 
+    /**
+     * [Description for __construct]
+     *
+     * @param null $id
+     * @param null $nombreProducto
+     * @param null $precioProducto
+     * @param null $tipoProducto
+     * 
+     */
     public function __construct($id = NULL, $nombreProducto = NULL, $precioProducto = NULL, $tipoProducto = NULL)
     {
         $this->_nombreProducto = $nombreProducto;
@@ -21,6 +32,17 @@ class Producto
   
 
 
+    /**
+     * La función `AltaProducto` en la clase `Producto` es responsable de crear una nueva entrada de Producto
+     * en la base de datos.
+     * 
+     * @param mixed $nombre
+     * @param mixed $precio
+     * @param mixed $tipo
+     * 
+     * @return [type]
+     * 
+     */
     static public function AltaProducto($nombre,$precio,$tipo)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -40,6 +62,16 @@ class Producto
         }
     }
     
+    /**
+     * 
+     * El método `ConsultarProducto()` en la clase `Producto` se utiliza para
+     * recuperar un Producto específico de la base de datos según el ID del Producto proporcionado.
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarProducto($id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -54,6 +86,14 @@ class Producto
         return $elemento;
     }
     
+    /**
+     * 
+     * La función `ConsultarTodosLosProductos()` en la clase `Pedido` es responsable de consultar la base
+     * de datos para recuperar todos los Productos almacenados en la tabla `Productos`.
+     * 
+     * @return [type]
+     * 
+     */
     static public function ConsultarTodosLosProductos()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -64,6 +104,14 @@ class Producto
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
 
+
+    /**
+     * La funcion ConsultarProductosDelMasVendidoAlMenos consulta la tabla de SQL para obtener 
+     * los productos ordenados del mas vendido al menos vendido 
+     *
+     * @return [type]
+     * 
+     */
     static public function ConsultarProductosDelMasVendidoAlMenos()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -74,6 +122,13 @@ class Producto
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
 
+    /**
+     * La funcion ConsultarProductosDelMasVendidoAlMenos consulta la tabla de SQL para obtener 
+     * los productos ordenados del menos vendido al mas vendido 
+     *
+     * @return [type]
+     * 
+     */
     static public function ConsultarProductosDelMenosVendidoAlMas()
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -84,8 +139,22 @@ class Producto
         return $consulta -> fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
 
-
-
+    
+    /**
+     * 
+     * La `ModificarProducto(,)` en la clase `Producto` es un método
+     * utilizado para actualizar un registro específico en la tabla `productos`
+     * de la base de datos.
+     *
+     * @param mixed $estadoPedido
+     * @param mixed $tiempoPreparacion
+     * @param mixed $precioTotal
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
+    
     static public function ModificarProducto($nombre,$precio,$tipo,$id)
     {
         $pdo = AccederABaseDeDatos('comanda');
@@ -107,6 +176,15 @@ class Producto
 
     }
 
+    /**
+     * `BorrarProducto` se encarga de eliminar un registro 
+     * de la tabla `Productos` en una base de datos. 
+     * 
+     * @param mixed $id
+     * 
+     * @return [type]
+     * 
+     */
     static public function BorrarProducto($id)
     {
         $pdo = AccederABaseDeDatos('comanda');

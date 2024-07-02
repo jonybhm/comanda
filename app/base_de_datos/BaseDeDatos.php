@@ -2,6 +2,15 @@
 
 
 
+/**
+ * La función `AccederABaseDeDatos` establece una conexión a una base de datos usando PDO en PHP.
+ *
+ * @param mixed $nombreBaseDeDatos
+ * 
+ * @return [type]
+ * 
+ */
+
 function AccederABaseDeDatos($nombreBaseDeDatos)
 {
     try
